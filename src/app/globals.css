@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* --- COLORES --- */
+  --color-brand-dark: #1a1a1a;
+  --color-brand-lime: #bef264;
+  --color-brand-limeHover: #a3d652;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* --- ANIMACIONES EXISTENTES --- */
+  --animate-pulse-fast: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-zoom-in: zoom-in 0.3s ease-out;
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
+  
+  @keyframes zoom-in {
+    from { transform: scale(0.95); }
+    to { transform: scale(1); }
+  }
+
+  /* --- NUEVA ANIMACIÓN: MARQUEE (Carrusel Infinito) --- */
+  @keyframes marquee {
+    /* Movemos el contenedor un 50% a la izquierda (la mitad de su contenido duplicado) */
+    to { transform: translateX(-50%); } 
+  }
+
+  /* Definimos la clase 'animate-marquee'. 40s es muy lento, ideal para logos. Linear es clave para que no frene */
+  --animate-marquee: marquee 40s linear infinite;
 }
 
+/* --- UTILIDADES BASE --- */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-brand-dark);
+  color: white;
+  font-family: var(--font-sans);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- CLASE PERSONALIZADA PARA BORDES SUAVES EN EL CARRUSEL --- */
+/* Esto crea un degradado transparente a los costados para que los logos no aparezcan/desaparezcan de golpe */
+.fade-sides {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
