@@ -62,7 +62,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200 cursor-pointer hover:border-brand-lime transition-colors"
             onClick={() => setIncludeLunch(!includeLunch)}
           >
-            <div className="flexflex-col">
+            <div className="flex flex-col">
               <span className="text-sm font-bold text-gray-800">¿Incluir Almuerzo VIP?</span>
               <p className="text-xs text-gray-500">Networking exclusivo con speakers</p>
             </div>

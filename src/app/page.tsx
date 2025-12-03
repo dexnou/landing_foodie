@@ -3,8 +3,9 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import BookingModal from '@/components/BookingModal';
 import AccordionItem from '@/components/Accordion';
+import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Play, MapPin, Calendar, CheckCircle2, Star, Shield, Award } from 'lucide-react';
+import { ArrowRight, Play, MapPin, Calendar, CheckCircle2, Star, Shield, Award, Rocket } from 'lucide-react';
 
 const sponsorsLogos = [
   { name: "Rappi", src: "/sponsors/rappi.png" },
@@ -66,9 +67,14 @@ export default function Home() {
               ASEGURÁ TU LUGAR
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            <button className="px-8 py-4 rounded-full border border-white/10 hover:bg-white/5 font-bold text-white transition-all text-sm uppercase tracking-wider">
+            
+            {/* 2. Reemplaza el <button> anterior por este <Link>: */}
+            <Link 
+              href="#agenda" 
+              className="px-8 py-4 rounded-full border border-white/10 hover:bg-white/5 font-bold text-white transition-all text-sm uppercase tracking-wider flex items-center justify-center"
+            >
               Ver Agenda
-            </button>
+            </Link>
           </div>
 
           {/* --- Sponsors Ghost Infinite Marquee --- */}
@@ -242,20 +248,41 @@ export default function Home() {
             </div>
           </div>
 
-          {/* BRONCE */}
-          <div>
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Award className="w-4 h-4 text-orange-700" />
-              <h3 className="text-orange-700 font-bold text-xs tracking-widest uppercase">Sponsors Bronce</h3>
-              <Award className="w-4 h-4 text-orange-700" />
+          {/* NIVEL 3: BRONCE Y EMPRENDEDOR */}
+          <div className="grid md:grid-cols-2 gap-8 md:gap-16">
+            
+            {/* BRONCE */}
+            <div>
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <Award className="w-4 h-4 text-orange-700" />
+                <h3 className="text-orange-700 font-bold text-xs tracking-widest uppercase">Sponsors Bronce</h3>
+                <Award className="w-4 h-4 text-orange-700" />
+              </div>
+              <div className="grid grid-cols-3 gap-4 opacity-70">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-16 bg-white/5 border border-orange-800/20 rounded flex items-center justify-center hover:bg-white/10 transition-all">
+                    <span className="text-[10px] font-bold text-gray-600">BRONCE {i}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-4 opacity-70">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-16 bg-white/5 border border-orange-800/20 rounded flex items-center justify-center hover:bg-white/10 transition-all">
-                  <span className="text-xs font-bold text-gray-600">BRONCE {i}</span>
-                </div>
-              ))}
+
+            {/* EMPRENDEDOR */}
+            <div>
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <Rocket className="w-4 h-4 text-brand-lime" />
+                <h3 className="text-brand-lime font-bold text-xs tracking-widest uppercase">Sponsors Emprendedor</h3>
+                <Rocket className="w-4 h-4 text-brand-lime" />
+              </div>
+              <div className="grid grid-cols-3 gap-4 opacity-70">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-16 bg-white/5 border border-lime-400/20 rounded flex items-center justify-center hover:bg-white/10 transition-all">
+                    <span className="text-[10px] font-bold text-gray-600">STARTUP {i}</span>
+                  </div>
+                ))}
+              </div>
             </div>
+
           </div>
 
         </div>
