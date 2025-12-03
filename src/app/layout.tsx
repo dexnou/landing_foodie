@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 // Cambiá este dominio por el real cuando lo tengas
-const siteUrl = new URL("https://fooddeliveryday.com.ar");
+const siteUrl = new URL("https://landingfoodie.vercel.app");
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   alternates: {
-    canonical: "/", // gracias al metadataBase esto se resuelve a https://fooddeliveryday.com.ar/
+    canonical: "/", // gracias al metadataBase esto se resuelve a https://landingfoodie.vercel.app/
   },
   robots: {
     index: true,
