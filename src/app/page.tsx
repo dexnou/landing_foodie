@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import Header from '@/components/Header';
 import BookingModal from '@/components/BookingModal';
 import AccordionItem from '@/components/Accordion';
-import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Play, MapPin, Calendar, CheckCircle2, Star, Shield, Award, Rocket } from 'lucide-react';
 
@@ -14,32 +14,29 @@ const sponsorsLogos = [
   { name: "McCain", src: "/sponsors/mccain.png" },
   { name: "+ Delivery", src: "/sponsors/masdelivery.png" },
   { name: "Food Packaging", src: "/sponsors/food-packaging.png" },
+  { name: "Rokket", src: "/sponsors/rokket.png" },
+  { name: "RapiBoy", src: "/sponsors/rapiboy.png" },
+  { name: "Cabify", src: "/sponsors/cabify.png" },
 ];
 
-// Duplicamos la lista varias veces para asegurar que cubra pantallas grandes sin cortes
 const multipliedSponsors = [...sponsorsLogos, ...sponsorsLogos, ...sponsorsLogos, ...sponsorsLogos];
 
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false); // Estado para controlar si se muestra el video o la portada
-
-  // TU ID DE VIDEO NUEVO
+  const [isPlaying, setIsPlaying] = useState(false);
   const VIDEO_ID = "dQw4w9WgXcQ";
 
   return (
     <main className="bg-brand-dark min-h-screen text-white overflow-x-hidden font-sans selection:bg-brand-lime selection:text-brand-dark">
-      <Header />
+      <Header onReserve={() => setModalOpen(true)} />
       <BookingModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
 
       {/* 1. HERO SECTION */}
       <section className="relative min-h-screen flex flex-col items-center pt-24 md:pt-32">
-        
-        {/* Fondo decorativo */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-brand-lime/10 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-6xl px-6 flex flex-col h-full items-center text-center">
           
-          {/* Badge Fecha */}
           <div className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 bg-white/5 rounded-full backdrop-blur-md mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Calendar className="w-4 h-4 text-brand-lime" />
             <span className="text-xs font-bold tracking-wider text-gray-300">2026</span>
@@ -48,13 +45,12 @@ export default function Home() {
             <span className="text-xs font-bold tracking-wider text-gray-300">ARGENTINA</span>
           </div>
 
-          {/* Título Principal */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter mb-6 uppercase">
             FOOD DELIVERY <br /> 
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-lime to-white">DAY 2026</span>
           </h1>
           
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-[1.2]">
             El evento más importante del ecosistema de delivery en Argentina. Conectando restaurantes, plataformas tecnológicas y el futuro de la gastronomía digital.
           </p>
 
@@ -62,31 +58,25 @@ export default function Home() {
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto px-4 md:px-0">
             <button 
               onClick={() => setModalOpen(true)}
-              className="group relative bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black text-lg py-4 px-10 rounded-full shadow-[0_0_40px_-10px_rgba(190,242,100,0.3)] transition-all flex items-center justify-center gap-3 animate-pulse-fast hover:animate-none hover:scale-105"
+              className="group relative bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black text-lg py-4 px-10 rounded-full shadow-[0_0_40px_-10px_rgba(190,242,100,0.3)] transition-all flex items-center justify-center gap-3 animate-pulse-fast hover:animate-none hover:scale-105 cursor-pointer uppercase min-h-[56px]"
             >
-              ASEGURÁ TU LUGAR
+              Asegurá tu lugar, reservá ahora!
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            
-            {/* 2. Reemplaza el <button> anterior por este <Link>: */}
             <Link 
               href="#agenda" 
-              className="px-8 py-4 rounded-full border border-white/10 hover:bg-white/5 font-bold text-white transition-all text-sm uppercase tracking-wider flex items-center justify-center"
+              className="px-8 py-4 rounded-full border border-white/10 hover:bg-white/5 font-bold text-white transition-all text-sm uppercase tracking-wider flex items-center justify-center min-h-[56px]"
             >
               Ver Agenda
             </Link>
           </div>
 
-          {/* --- Sponsors Ghost Infinite Marquee --- */}
           <div className="mt-16 md:mt-24 w-full max-w-5xl">
              <p className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-6 text-center">Main Partners</p>
-            
-             {/* Contenedor con overflow hidden y bordes suaves */}
             <div className="relative w-full overflow-hidden fade-sides py-2">
                 <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center">
                    {multipliedSponsors.map((item, index) => (
                        <div key={index} className="mx-4 flex-shrink-0 group cursor-pointer">
-                           {/* Caja de logo */}
                            <div className="w-32 h-14 relative flex items-center justify-center grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
                                 <Image 
                                   src={item.src} 
@@ -100,7 +90,6 @@ export default function Home() {
                 </div>
             </div>
           </div>
-           {/* --- FIN Marquee --- */}
 
         </div>
       </section>
@@ -125,38 +114,34 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold border-b border-brand-lime pb-1 hover:text-white hover:border-white transition-colors">
-              Reservar entradas ahora
-            </button>
+            
+            <div className="flex justify-center md:justify-start">
+              <button 
+                onClick={() => setModalOpen(true)} 
+                className="w-full md:w-auto bg-white/10 hover:bg-white/20 border border-brand-lime/50 text-brand-lime font-bold text-lg py-4 px-10 rounded-full transition-all flex items-center justify-center gap-2 hover:scale-105 shadow-lg shadow-brand-lime/10 min-h-[56px] cursor-pointer"
+              >
+                RESERVAR ENTRADAS AHORA
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
-          {/* --- VIDEO PLAYER CON LÓGICA DE PORTADA --- */}
           <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl aspect-video bg-gray-900 group">
-             
              {!isPlaying ? (
-               // 1. ESTADO PORTADA: Se muestra antes de dar play.
-               // El botón verde está aquí dentro.
                <button 
                  onClick={() => setIsPlaying(true)}
                  className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-20"
                >
-                 {/* Capa oscura sobre el fondo */}
                  <div className="absolute inset-0 bg-brand-lime/10 group-hover:bg-brand-lime/5 transition-colors z-10" />
                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-0" />
-                 
-                 {/* BOTÓN VERDE PLAY (Este es el que querías conservar) */}
                  <div className="relative z-30 w-20 h-20 bg-brand-lime text-brand-dark rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(190,242,100,0.4)]">
                     <Play className="w-8 h-8 fill-current ml-1" />
                  </div>
-                 
-                 {/* Texto CTA */}
                  <span className="absolute bottom-8 text-sm font-bold tracking-widest text-white z-30 uppercase">
                    VER PRESENTACIÓN 2026
                  </span>
                </button>
              ) : (
-               // 2. ESTADO REPRODUCIENDO: Se muestra al hacer clic en el botón verde.
-               // Carga el iframe de YouTube con tu ID.
                <iframe 
                  className="w-full h-full animate-in fade-in duration-500"
                  src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0`} 
@@ -165,7 +150,6 @@ export default function Home() {
                  allowFullScreen
                ></iframe>
              )}
-
           </div>
         </div>
       </section>
@@ -182,27 +166,21 @@ export default function Home() {
             <AccordionItem time="09:00" title="Apertura de Puertas">
               Vení a visitar los stands participantes, retira tu acreditación y comenzá el networking.
             </AccordionItem>
-            
             <AccordionItem time="10:00 - 10:30" title="Panel: Gastronómicos & Delivery">
               Charla descontracturada con 3 gastronómicos que supieron sacarle jugo al delivery. Estrategias reales para aumentar ventas.
             </AccordionItem>
-            
             <AccordionItem time="11:30 - 12:00" title="Dark Kitchens: Cocina sin Fronteras">
               Con el <strong>Regional Country Manager de Atomic Kitchens</strong>. Descubre el futuro de los modelos operativos eficientes.
             </AccordionItem>
-            
             <AccordionItem time="14:00 - 14:30" title="El Futuro se Entrega">
               <strong>Country Manager Rappi Argentina</strong>. Cómo Rappi redefine la última milla y qué esperar para el 2026.
             </AccordionItem>
-            
             <AccordionItem time="15:30 - 16:00" title="Ecosistema en Expansión: Mercado Pago">
               <strong>Country Manager Mercado Pago Argentina</strong>. La visión financiera y tecnológica para transformar el delivery.
             </AccordionItem>
-            
             <AccordionItem time="16:15" title="After Party by Temple & Gin Bosque">
               Comenzamos con una gran propuesta de After para relajar y conectar.
             </AccordionItem>
-            
             <AccordionItem time="16:45" title="Cierre a Puro Humor: Gerardo Freideles">
               Stand Up: La gastronomía contada por un gastronómico. El broche de oro ideal para terminar el día.
             </AccordionItem>
@@ -248,10 +226,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* NIVEL 3: BRONCE Y EMPRENDEDOR */}
+          {/* BRONCE Y EMPRENDEDOR */}
           <div className="grid md:grid-cols-2 gap-8 md:gap-16">
-            
-            {/* BRONCE */}
             <div>
               <div className="flex items-center justify-center gap-2 mb-6">
                 <Award className="w-4 h-4 text-orange-700" />
@@ -266,8 +242,6 @@ export default function Home() {
                 ))}
               </div>
             </div>
-
-            {/* EMPRENDEDOR */}
             <div>
               <div className="flex items-center justify-center gap-2 mb-6">
                 <Rocket className="w-4 h-4 text-brand-lime" />
@@ -282,9 +256,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-
           </div>
-
         </div>
       </section>
 
@@ -300,34 +272,106 @@ export default function Home() {
           </p>
           <button 
             onClick={() => setModalOpen(true)}
-            className="bg-black text-white hover:bg-gray-800 font-bold text-xl py-5 px-12 rounded-xl shadow-2xl hover:-translate-y-1 transition-all"
+            className="bg-black text-white hover:bg-gray-800 font-bold text-xl py-5 px-12 rounded-xl shadow-2xl hover:-translate-y-1 transition-all cursor-pointer min-h-[56px]"
           >
             ¡QUIERO MI ENTRADA!
           </button>
         </div>
       </section>
 
-      {/* 6. FOOTER */}
-      <footer className="bg-black pt-20 pb-10 px-6 border-t border-white/10">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-10 text-sm text-gray-500">
-          <div className="md:w-1/3">
-            <div className="font-bold text-white text-xl mb-4 tracking-tighter">FOOD DELIVERY <span className="text-brand-lime">DAY</span></div>
-            <p>Conectando el ecosistema de delivery y logística en Argentina.</p>
+      {/* 6. FAQ - PREGUNTAS FRECUENTES (NUEVA SECCIÓN) */}
+      <section id="faq" className="py-24 px-6 bg-brand-dark border-t border-white/5">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black mb-4 uppercase">Preguntas Frecuentes</h2>
+            <p className="text-gray-400">Todo lo que necesitás saber sobre el evento.</p>
           </div>
-          <div className="flex gap-10">
-            <div className="flex flex-col gap-3">
-              <span className="text-white font-bold mb-2">Evento</span>
-              <a href="#" className="hover:text-brand-lime">Agenda</a>
-              <a href="#" className="hover:text-brand-lime">Sponsors</a>
-            </div>
-            <div className="flex flex-col gap-3">
-              <span className="text-white font-bold mb-2">Contacto</span>
-              <a href="mailto:hola@fooddeliveryday.com" className="hover:text-brand-lime">hola@fooddeliveryday.com</a>
-            </div>
+
+          <div className="space-y-2">
+            <AccordionItem title="¿Qué incluye la entrada?">
+              La entrada incluye acceso completo al evento, participación en todas las charlas y paneles, networking con profesionales del sector, y acceso a los stands de los sponsors. La opción con almuerzo incluye además el almuerzo gourmet durante el evento.
+            </AccordionItem>
+
+            <AccordionItem title="¿Dónde se realiza el evento?">
+              El evento se realiza en Buenos Aires, Argentina. La ubicación exacta será comunicada a todos los registrados por email una semana antes del evento.
+            </AccordionItem>
+
+            <AccordionItem title="¿Hay estacionamiento disponible?">
+              Sí, el venue cuenta con estacionamiento para los asistentes. También hay opciones de transporte público cercanas que compartiremos en el email de confirmación.
+            </AccordionItem>
+
+            <AccordionItem title="¿Puedo cambiar o cancelar mi entrada?">
+              Podés solicitar cambios o cancelaciones hasta 7 días antes del evento. Para más información, contactanos por email a <a href="mailto:info@fooddeliveryday.com.ar" className="text-brand-lime hover:underline font-bold">info@fooddeliveryday.com.ar</a>
+            </AccordionItem>
+
+            <AccordionItem title="¿Quiénes participan como speakers?">
+              Contamos con la participación de Country Managers de Rappi, Mercado Pago y Atomic Kitchens, además de un panel con gastronómicos exitosos en delivery y un cierre especial con el comediante Gerardo Freideles.
+            </AccordionItem>
           </div>
         </div>
-        <div className="max-w-6xl mx-auto mt-20 pt-8 border-t border-white/5 text-center text-xs text-gray-700">
-          © 2026 Food Delivery Day Argentina. Todos los derechos reservados.
+      </section>
+
+      {/* 7. FOOTER SEO OPTIMIZED */}
+      <footer className="bg-black pt-20 pb-10 px-6 border-t border-white/10" role="contentinfo">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-10 text-sm text-gray-500">
+          
+          {/* Columna Marca */}
+          <div className="md:w-1/3">
+            <Link href="/" aria-label="Volver al inicio" className="inline-block group">
+              <span className="font-bold text-white text-xl mb-4 tracking-tighter block group-hover:opacity-80 transition-opacity">
+                FOOD DELIVERY <span className="text-brand-lime">DAY</span>
+              </span>
+            </Link>
+            <p className="leading-relaxed mt-2">
+              Conectando el ecosistema de delivery, gastronomía y logística en Argentina. El punto de encuentro para liderar el futuro digital.
+            </p>
+          </div>
+
+          {/* Columnas de Navegación */}
+          <div className="flex flex-col sm:flex-row gap-10 md:gap-20">
+            
+            {/* Navegación del Evento */}
+            <nav aria-label="Enlaces del evento" className="flex flex-col gap-4">
+              <h3 className="text-white font-bold uppercase tracking-wider text-xs">El Evento</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link href="#agenda" className="hover:text-brand-lime transition-colors">Agenda Completa</Link>
+                </li>
+                <li>
+                  <Link href="#sponsors" className="hover:text-brand-lime transition-colors">Sponsors & Partners</Link>
+                </li>
+                <li>
+                  <Link href="#faq" className="hover:text-brand-lime transition-colors">Preguntas Frecuentes</Link>
+                </li>
+              </ul>
+            </nav>
+
+            {/* Información de Contacto (Semantic Address) */}
+            <address className="flex flex-col gap-4 not-italic">
+              <h3 className="text-white font-bold uppercase tracking-wider text-xs">Contacto</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a href="mailto:hola@fooddeliveryday.com" className="hover:text-brand-lime transition-colors flex items-center gap-2">
+                    hola@fooddeliveryday.com
+                  </a>
+                </li>
+                <li>
+                  <span className="block">Buenos Aires, Argentina</span>
+                </li>
+              </ul>
+            </address>
+
+          </div>
+        </div>
+
+        {/* Copyright y Legales */}
+        <div className="max-w-6xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-700">
+          <p>© 2026 Food Delivery Day Argentina. Todos los derechos reservados.</p>
+          
+          <nav aria-label="Legales" className="flex gap-6">
+            <Link href="#" className="hover:text-gray-500 transition-colors" rel="nofollow">Política de Privacidad</Link>
+            <Link href="#" className="hover:text-gray-500 transition-colors" rel="nofollow">Términos y Condiciones</Link>
+          </nav>
         </div>
       </footer>
     </main>
