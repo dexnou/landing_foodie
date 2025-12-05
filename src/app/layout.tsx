@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 // Cambiá este dominio por el real cuando lo tengas
-const siteUrl = new URL("https://landingfoodie.vercel.app");
+const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,

@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       // disallow: "/admin", // si en el futuro querés bloquear algo
     },
-    sitemap: "https://fooddeliveryday.com.ar/sitemap.xml", // cambiá si usás otro dominio
+    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL}/sitemap.xml`, // cambiá si usás otro dominio
   };
 }
