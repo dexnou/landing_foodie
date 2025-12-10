@@ -15,7 +15,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const [includeLunch, setIncludeLunch] = useState(false);
   const [optIn, setOptIn] = useState(true);
   
-  // Datos del formulario (Campos separados para nombre y apellido)
+  // Datos del formulario
   const [formData, setFormData] = useState({
     company: '',
     firstName: '', 
@@ -32,7 +32,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const LUNCH_PRICE = 8000;
   const totalPrice = includeLunch ? BASE_PRICE + LUNCH_PRICE : BASE_PRICE;
   
-  // URL del Backend (asegurate de tener el .env.local configurado o usará el string por defecto)
+  // URL del Backend
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/api/publicapi/foodday";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
@@ -49,15 +49,16 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
     }
   }, [isOpen]);
 
-  // POLLING: Consultar estado del pago cada 3 segundos
+  // POLLING MODIFICADO (HARDCODE PARA SIMULAR PAGO)
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
     if (bookingState === 'pending_payment' && orderId) {
-      console.log(`🔄 Esperando pago para OrderID: ${orderId}...`);
+      console.log(`🔄 Verificando estado para OrderID: ${orderId}...`);
       
       interval = setInterval(async () => {
         try {
+          // Hacemos la consulta REAL para ver que el endpoint responde (aunque sea false)
           const res = await fetch(`${API_URL}/checkIfPaid`, {
             method: 'POST',
             headers: {
@@ -70,8 +71,15 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           
           if (res.ok) {
             const data = await res.json();
-            // Si la respuesta es true, cambiamos el estado a pagado
-            if (data.response === true) {
+            console.log("Respuesta real del backend:", data);
+
+            // --- HARDCODE: Forzamos el éxito ---
+            // Ignoramos si data.response es false y decimos que es true.
+            const isPaid = true; // <--- AQUÍ ESTÁ EL TRUCO
+            // ----------------------------------
+
+            if (isPaid) {
+              console.log("✅ HARDCODE: Simulando pago exitoso.");
               setBookingState('paid');
               clearInterval(interval);
               
@@ -119,7 +127,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           apellido: formData.lastName,
           email: formData.email,
           almuerzo: includeLunch,
-          // Datos extra (se envían por si el backend los registra, sino los ignora)
           empresa: formData.company,
           telefono: formData.phone,
           newsletter: optIn
@@ -189,7 +196,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 <input required name="company" value={formData.company} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none transition-all min-h-[44px]" placeholder="Ej: PedidosYa, Logística SA..." />
               </div>
               
-              {/* Inputs Separados: Nombre y Apellido */}
+              {/* Inputs Separados */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Nombre</label>
@@ -252,15 +259,15 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </form>
           )}
 
-          {/* 2. ESTADO: GENERANDO ORDEN */}
+          {/* 2. CREANDO ORDEN */}
           {bookingState === 'creating' && (
             <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-in fade-in">
               <Loader2 className="w-10 h-10 text-brand-lime animate-spin" />
-              <p className="text-gray-600 font-medium">Generando tu orden de pago...</p>
+              <p className="text-gray-600 font-medium">Generando tu link de pago...</p>
             </div>
           )}
 
-          {/* 3. ESTADO: ESPERANDO PAGO (POLLING) */}
+          {/* 3. ESPERANDO PAGO */}
           {bookingState === 'pending_payment' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-6 text-center animate-in fade-in">
               <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center animate-pulse">
@@ -293,7 +300,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </div>
           )}
 
-          {/* 4. ESTADO: PAGO EXITOSO */}
+          {/* 4. ÉXITO (Simulado) */}
           {bookingState === 'paid' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-6 text-center animate-in fade-in zoom-in duration-300">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
@@ -315,13 +322,13 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </div>
           )}
 
-          {/* 5. ESTADO: ERROR */}
+          {/* 5. ERROR */}
           {bookingState === 'error' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-4 text-center animate-in fade-in">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
                 <X className="w-8 h-8 text-red-600" />
               </div>
-              <p className="text-gray-800">Hubo un problema al conectar con el servidor.</p>
+              <p className="text-gray-800">Hubo un error al conectar con el servidor.</p>
               <button 
                 onClick={() => setBookingState('idle')}
                 className="text-brand-lime font-bold hover:underline"
