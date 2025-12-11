@@ -1,5 +1,5 @@
 'use client';
-import { X, Check, Shield, Loader2, ExternalLink } from 'lucide-react';
+import { X, Check, Shield, Loader2, ExternalLink, Minus, Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface ModalProps {
@@ -15,6 +15,9 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const [includeLunch, setIncludeLunch] = useState(false);
   const [optIn, setOptIn] = useState(true);
   
+  // NUEVO: Estado para la cantidad de entradas
+  const [quantity, setQuantity] = useState(1);
+  
   // Datos del formulario
   const [formData, setFormData] = useState({
     company: '',
@@ -27,10 +30,13 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const [orderId, setOrderId] = useState<number | null>(null);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
 
-  // CONFIGURACIÓN
+  // CONFIGURACIÓN DE PRECIOS
   const BASE_PRICE = 12000;
   const LUNCH_PRICE = 8000;
-  const totalPrice = includeLunch ? BASE_PRICE + LUNCH_PRICE : BASE_PRICE;
+  
+  // Cálculo del precio unitario y total
+  const unitPrice = includeLunch ? BASE_PRICE + LUNCH_PRICE : BASE_PRICE;
+  const totalPrice = unitPrice * quantity;
   
   // URL del Backend
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/api/publicapi/foodday";
@@ -44,21 +50,26 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
         setOrderId(null);
         setPaymentLink(null);
         setFormData({ company: '', firstName: '', lastName: '', email: '', phone: '' });
+        setQuantity(1); // Reseteamos la cantidad a 1
+        setIncludeLunch(false);
       }, 300);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  // POLLING MODIFICADO (HARDCODE PARA SIMULAR PAGO)
+  // Funciones para manejar la cantidad
+  const increaseQuantity = () => setQuantity(prev => prev + 1);
+  const decreaseQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+
+  // POLLING: Consultar estado del pago cada 3 segundos
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
     if (bookingState === 'pending_payment' && orderId) {
-      console.log(`🔄 Verificando estado para OrderID: ${orderId}...`);
+      console.log(`🔄 Esperando pago para OrderID: ${orderId}...`);
       
       interval = setInterval(async () => {
         try {
-          // Hacemos la consulta REAL para ver que el endpoint responde (aunque sea false)
           const res = await fetch(`${API_URL}/checkIfPaid`, {
             method: 'POST',
             headers: {
@@ -71,15 +82,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           
           if (res.ok) {
             const data = await res.json();
-            console.log("Respuesta real del backend:", data);
-
-            // --- HARDCODE: Forzamos el éxito ---
-            // Ignoramos si data.response es false y decimos que es true.
-            const isPaid = true; // <--- AQUÍ ESTÁ EL TRUCO
-            // ----------------------------------
-
-            if (isPaid) {
-              console.log("✅ HARDCODE: Simulando pago exitoso.");
+            // Si la respuesta es true, cambiamos el estado a pagado
+            if (data.response === true) {
               setBookingState('paid');
               clearInterval(interval);
               
@@ -90,7 +94,12 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                   event: 'purchase',
                   order_id: orderId,
                   value: totalPrice,
-                  currency: 'ARS'
+                  currency: 'ARS',
+                  items: [{
+                    item_name: includeLunch ? 'Entrada Full Experience' : 'Entrada General',
+                    quantity: quantity,
+                    price: unitPrice
+                  }]
                 });
               }
             }
@@ -102,7 +111,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
     }
 
     return () => clearInterval(interval);
-  }, [bookingState, orderId, API_URL, API_TOKEN, totalPrice]);
+  }, [bookingState, orderId, API_URL, API_TOKEN, totalPrice, quantity, unitPrice, includeLunch]);
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,6 +124,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
     
     try {
       // 1. Crear Orden (POST al Backend Real)
+      // Enviamos la cantidad para que el backend calcule el total correcto
       const response = await fetch(`${API_URL}/crearOrden`, {
         method: 'POST',
         headers: {
@@ -127,6 +137,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           apellido: formData.lastName,
           email: formData.email,
           almuerzo: includeLunch,
+          cantidad: quantity, // <-- Enviamos la cantidad seleccionada
+          // Datos extra
           empresa: formData.company,
           telefono: formData.phone,
           newsletter: optIn
@@ -191,6 +203,33 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           {/* 1. FORMULARIO DE DATOS */}
           {bookingState === 'idle' && (
             <form className="space-y-5" onSubmit={handleSubmit}>
+              
+              {/* SELECCIÓN DE CANTIDAD */}
+              <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-gray-900">Cantidad de entradas</span>
+                  <p className="text-xs text-gray-500">${unitPrice.toLocaleString('es-AR')} c/u</p>
+                </div>
+                <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-lg border border-gray-200 shadow-sm">
+                  <button 
+                    type="button" 
+                    onClick={decreaseQuantity}
+                    className="p-1 hover:bg-gray-100 rounded-md transition-colors text-gray-600 disabled:opacity-50"
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="font-bold text-gray-900 w-4 text-center select-none">{quantity}</span>
+                  <button 
+                    type="button" 
+                    onClick={increaseQuantity}
+                    className="p-1 hover:bg-gray-100 rounded-md transition-colors text-gray-600"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Nombre de la Empresa</label>
                 <input required name="company" value={formData.company} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none transition-all min-h-[44px]" placeholder="Ej: PedidosYa, Logística SA..." />
@@ -300,7 +339,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </div>
           )}
 
-          {/* 4. ÉXITO (Simulado) */}
+          {/* 4. ÉXITO */}
           {bookingState === 'paid' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-6 text-center animate-in fade-in zoom-in duration-300">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
