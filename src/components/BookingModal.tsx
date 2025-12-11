@@ -137,7 +137,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           apellido: formData.lastName,
           email: formData.email,
           almuerzo: includeLunch,
-          cantidad: quantity, // <-- Enviamos la cantidad seleccionada
+          cantidad: quantity, // <-- Enviamos la cantidad seleccionadaa
           // Datos extra
           empresa: formData.company,
           telefono: formData.phone,
