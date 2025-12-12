@@ -2,9 +2,14 @@
 
 @theme {
   /* --- COLORES --- */
-  --color-brand-dark: #1a1a1a;
-  --color-brand-lime: #bef264;
-  --color-brand-limeHover: #a3d652;
+  /* Fondo principal (Mantenemos el oscuro para contraste) */
+  --color-brand-dark: #1a1a1a; 
+  
+  /* COLOR PRINCIPAL (ROSA #ff0054) */
+  --color-brand-lime: #ff0054;
+  
+  /* COLOR HOVER (Una versión un poco más oscura del rosa para interacciones) */
+  --color-brand-limeHover: #d60046;
 
   /* --- ANIMACIONES EXISTENTES --- */
   --animate-pulse-fast: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -21,13 +26,11 @@
     to { transform: scale(1); }
   }
 
-  /* --- NUEVA ANIMACIÓN: MARQUEE (Carrusel Infinito) --- */
+  /* --- ANIMACIÓN: MARQUEE (Carrusel Infinito) --- */
   @keyframes marquee {
-    /* Movemos el contenedor un 50% a la izquierda (la mitad de su contenido duplicado) */
     to { transform: translateX(-50%); } 
   }
 
-  /* Definimos la clase 'animate-marquee'. 40s es muy lento, ideal para logos. Linear es clave para que no frene */
   --animate-marquee: marquee 40s linear infinite;
 }
 
@@ -42,8 +45,6 @@ html {
   scroll-behavior: smooth;
 }
 
-/* --- CLASE PERSONALIZADA PARA BORDES SUAVES EN EL CARRUSEL --- */
-/* Esto crea un degradado transparente a los costados para que los logos no aparezcan/desaparezcan de golpe */
 .fade-sides {
   mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);

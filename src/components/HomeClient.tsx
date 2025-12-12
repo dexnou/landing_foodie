@@ -18,6 +18,7 @@ const sponsorsLogos = [
   { name: "RapiBoy", src: "/sponsors/rapiboy.png" },
   { name: "+ Delivery", src: "/sponsors/masdelivery.png" },
   { name: "Food Packaging", src: "/sponsors/food-packaging.png" },
+  { name: "OmAgency", src: "/sponsors/omagency.png" }
 ];
 
 const multipliedSponsors = [...sponsorsLogos, ...sponsorsLogos, ...sponsorsLogos, ...sponsorsLogos];
@@ -37,7 +38,7 @@ export default function Home() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-brand-lime/10 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-6xl px-6 flex flex-col h-full items-center text-center">
-          
+
           <div className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 bg-white/5 rounded-full backdrop-blur-md mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Calendar className="w-4 h-4 text-brand-lime" />
             <span className="text-xs font-bold tracking-wider text-gray-300">2026</span>
@@ -47,25 +48,25 @@ export default function Home() {
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter mb-6 uppercase">
-            FOOD DELIVERY <br /> 
+            FOOD DELIVERY <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-lime to-white">DAY 2026</span>
           </h1>
-          
+
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-[1.2]">
             El evento más importante del ecosistema de delivery en Argentina. Conectando restaurantes, plataformas tecnológicas y el futuro de la gastronomía digital.
           </p>
 
           {/* CTA Principal */}
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto px-4 md:px-0">
-            <button 
+            <button
               onClick={() => setModalOpen(true)}
               className="group relative bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black text-lg py-4 px-10 rounded-full shadow-[0_0_40px_-10px_rgba(190,242,100,0.3)] transition-all flex items-center justify-center gap-3 animate-pulse-fast hover:animate-none hover:scale-105 cursor-pointer uppercase min-h-[56px]"
             >
               Asegurá tu lugar, reservá ahora!
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            <Link 
-              href="#agenda" 
+            <Link
+              href="#agenda"
               className="px-8 py-4 rounded-full border border-white/10 hover:bg-white/5 font-bold text-white transition-all text-sm uppercase tracking-wider flex items-center justify-center min-h-[56px]"
             >
               Ver Agenda
@@ -73,22 +74,22 @@ export default function Home() {
           </div>
 
           <div className="mt-16 md:mt-24 w-full max-w-5xl">
-             <p className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-6 text-center">Main Partners</p>
+            <p className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-6 text-center">Main Partners</p>
             <div className="relative w-full overflow-hidden fade-sides py-2">
-                <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center">
-                   {multipliedSponsors.map((item, index) => (
-                       <div key={index} className="mx-4 flex-shrink-0 group cursor-pointer">
-                           <div className="w-32 h-14 relative flex items-center justify-center grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
-                                <Image 
-                                  src={item.src} 
-                                  alt={item.name} 
-                                  fill 
-                                  className="object-contain" 
-                                />
-                           </div>
-                       </div>
-                   ))}
-                </div>
+              <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center">
+                {multipliedSponsors.map((item, index) => (
+                  <div key={index} className="mx-4 flex-shrink-0 group cursor-pointer">
+                    <div className="w-32 h-14 relative flex items-center justify-center grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+                      <Image
+                        src={item.src}
+                        alt={item.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -115,10 +116,10 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            
+
             <div className="flex justify-center md:justify-start">
-              <button 
-                onClick={() => setModalOpen(true)} 
+              <button
+                onClick={() => setModalOpen(true)}
                 className="w-full md:w-auto bg-white/10 hover:bg-white/20 border border-brand-lime/50 text-brand-lime font-bold text-lg py-4 px-10 rounded-full transition-all flex items-center justify-center gap-2 hover:scale-105 shadow-lg shadow-brand-lime/10 min-h-[56px] cursor-pointer"
               >
                 RESERVAR ENTRADAS AHORA
@@ -128,29 +129,29 @@ export default function Home() {
           </div>
 
           <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl aspect-video bg-gray-900 group">
-             {!isPlaying ? (
-               <button 
-                 onClick={() => setIsPlaying(true)}
-                 className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-20"
-               >
-                 <div className="absolute inset-0 bg-brand-lime/10 group-hover:bg-brand-lime/5 transition-colors z-10" />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-0" />
-                 <div className="relative z-30 w-20 h-20 bg-brand-lime text-brand-dark rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(190,242,100,0.4)]">
-                    <Play className="w-8 h-8 fill-current ml-1" />
-                 </div>
-                 <span className="absolute bottom-8 text-sm font-bold tracking-widest text-white z-30 uppercase">
-                   VER PRESENTACIÓN 2026
-                 </span>
-               </button>
-             ) : (
-               <iframe 
-                 className="w-full h-full animate-in fade-in duration-500"
-                 src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0`} 
-                 title="Food Delivery Day Aftermovie" 
-                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                 allowFullScreen
-               ></iframe>
-             )}
+            {!isPlaying ? (
+              <button
+                onClick={() => setIsPlaying(true)}
+                className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-20"
+              >
+                <div className="absolute inset-0 bg-brand-lime/10 group-hover:bg-brand-lime/5 transition-colors z-10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-0" />
+                <div className="relative z-30 w-20 h-20 bg-brand-lime text-brand-dark rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(190,242,100,0.4)]">
+                  <Play className="w-8 h-8 fill-current ml-1" />
+                </div>
+                <span className="absolute bottom-8 text-sm font-bold tracking-widest text-white z-30 uppercase">
+                  VER PRESENTACIÓN 2026
+                </span>
+              </button>
+            ) : (
+              <iframe
+                className="w-full h-full animate-in fade-in duration-500"
+                src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0`}
+                title="Food Delivery Day Aftermovie"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            )}
           </div>
         </div>
       </section>
@@ -162,7 +163,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-5xl font-black mb-4">AGENDA CONFIRMADA</h2>
             <p className="text-gray-400">Una jornada intensiva con los líderes del sector.</p>
           </div>
-          
+
           <div className="space-y-2">
             <AccordionItem time="09:00" title="Apertura de Puertas">
               Vení a visitar los stands participantes, retira tu acreditación y comenzá el networking.
@@ -195,7 +196,7 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-black mb-16 text-white uppercase tracking-tight">
             Nuestros Sponsors
           </h2>
-          
+
           {/* --- SPONSORS ORO --- */}
           <div className="mb-16">
             <div className="flex items-center justify-center gap-2 mb-8">
@@ -203,7 +204,7 @@ export default function Home() {
               <h3 className="text-yellow-400 font-bold text-lg tracking-widest uppercase">Sponsors Oro</h3>
               <Star className="w-5 h-5 text-yellow-400 fill-current" />
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
               {[
                 { name: "Rappi", src: "/sponsors/rappii.png" },
@@ -211,8 +212,8 @@ export default function Home() {
               ].map((sponsor) => (
                 <div key={sponsor.name} className="flex items-center justify-center p-8 border border-white/5 rounded-lg hover:border-white/10 transition-colors bg-white/[0.02]">
                   <div className="relative w-48 h-20"> {/* Tamaño minimalista */}
-                    <Image 
-                      src={sponsor.src} 
+                    <Image
+                      src={sponsor.src}
                       alt={sponsor.name}
                       fill
                       className="object-contain grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all duration-500"
@@ -238,8 +239,8 @@ export default function Home() {
               ].map((sponsor) => (
                 <div key={sponsor.name} className="flex items-center justify-center p-6 border border-white/5 rounded-lg hover:border-white/10 transition-colors">
                   <div className="relative w-36 h-16"> {/* Tamaño minimalista */}
-                    <Image 
-                      src={sponsor.src} 
+                    <Image
+                      src={sponsor.src}
                       alt={sponsor.name}
                       fill
                       className="object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500"
@@ -252,7 +253,7 @@ export default function Home() {
 
           {/* --- NIVEL 3: BRONCE Y EMPRENDEDOR --- */}
           <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto border-t border-white/5 pt-12">
-            
+
             {/* BRONCE */}
             <div className="flex flex-col items-center">
               <div className="flex items-center justify-center gap-2 mb-6">
@@ -260,15 +261,15 @@ export default function Home() {
                 <h3 className="text-orange-700 font-bold text-xs tracking-widest uppercase">Sponsors Bronce</h3>
                 <Award className="w-4 h-4 text-orange-700" />
               </div>
-              
+
               <div className="flex flex-wrap justify-center gap-8 w-full">
                 {[
                   { name: "McCain", src: "/sponsors/mccainn.png" },
                   { name: "Cabify", src: "/sponsors/cabify.png" }
                 ].map((sponsor) => (
                   <div key={sponsor.name} className="relative w-28 h-12 grayscale hover:grayscale-0 opacity-50 hover:opacity-100 transition-all">
-                    <Image 
-                      src={sponsor.src} 
+                    <Image
+                      src={sponsor.src}
                       alt={sponsor.name}
                       fill
                       className="object-contain"
@@ -290,11 +291,12 @@ export default function Home() {
                 {[
                   { name: "RapiBoy", src: "/sponsors/rapiboy.png" },
                   { name: "MasDelivery", src: "/sponsors/masdelivery.png" },
-                  { name: "Food Packaging", src: "/sponsors/food-packaging.png" }
+                  { name: "Food Packaging", src: "/sponsors/food-packaging.png" },
+                  { name: "OmAgency", src: "/sponsors/omagency.png" }
                 ].map((sponsor) => (
                   <div key={sponsor.name} className="relative w-24 h-12 grayscale hover:grayscale-0 opacity-50 hover:opacity-100 transition-all">
-                    <Image 
-                      src={sponsor.src} 
+                    <Image
+                      src={sponsor.src}
                       alt={sponsor.name}
                       fill
                       className="object-contain"
@@ -313,12 +315,12 @@ export default function Home() {
         <div className="absolute inset-0 bg-brand-lime transform -skew-y-2 z-0" />
         <div className="relative z-10 max-w-4xl mx-auto text-center text-brand-dark">
           <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
-            NO TE QUEDES AFUERA DE LA <br/> EVOLUCIÓN
+            NO TE QUEDES AFUERA DE LA <br /> EVOLUCIÓN
           </h2>
           <p className="font-medium text-xl mb-10 max-w-2xl mx-auto opacity-80">
             Los cupos son estrictamente limitados por la capacidad del auditorio.
           </p>
-          <button 
+          <button
             onClick={() => setModalOpen(true)}
             className="bg-black text-white hover:bg-gray-800 font-bold text-xl py-5 px-12 rounded-xl shadow-2xl hover:-translate-y-1 transition-all cursor-pointer min-h-[56px]"
           >
@@ -362,7 +364,7 @@ export default function Home() {
       {/* 7. FOOTER SEO OPTIMIZED */}
       <footer className="bg-black pt-20 pb-10 px-6 border-t border-white/10" role="contentinfo">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-10 text-sm text-gray-500">
-          
+
           {/* Columna Marca */}
           <div className="md:w-1/3">
             <Link href="/" aria-label="Volver al inicio" className="inline-block group">
@@ -377,7 +379,7 @@ export default function Home() {
 
           {/* Columnas de Navegación */}
           <div className="flex flex-col sm:flex-row gap-10 md:gap-20">
-            
+
             {/* Navegación del Evento */}
             <nav aria-label="Enlaces del evento" className="flex flex-col gap-4">
               <h3 className="text-white font-bold uppercase tracking-wider text-xs">El Evento</h3>
@@ -415,10 +417,22 @@ export default function Home() {
         {/* Copyright y Legales */}
         <div className="max-w-6xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-700">
           <p>© 2026 Food Delivery Day Argentina. Todos los derechos reservados.</p>
-          
+
           <nav aria-label="Legales" className="flex gap-6">
-            <Link href="#" className="hover:text-gray-500 transition-colors" rel="nofollow">Política de Privacidad</Link>
-            <Link href="#" className="hover:text-gray-500 transition-colors" rel="nofollow">Términos y Condiciones</Link>
+            <Link
+              href="/politica-de-privacidad"
+              className="hover:text-gray-500 transition-colors"
+              rel="nofollow"
+            >
+              Política de Privacidad
+            </Link>
+            <Link
+              href="/terminos-y-condiciones"
+              className="hover:text-gray-500 transition-colors"
+              rel="nofollow"
+            >
+              Términos y Condiciones
+            </Link>
           </nav>
         </div>
       </footer>
