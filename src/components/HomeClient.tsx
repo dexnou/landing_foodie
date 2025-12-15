@@ -295,7 +295,7 @@ Saludos.`
                 {[
                   { name: "RapiBoy", src: "/sponsors/rapiboy.png" },
                   { name: "MasDelivery", src: "/sponsors/masdelivery.png" },
-                  { name: "Food Packaging", src: "/sponsors/food-packaging.png" },
+                  { name: "Food Packaging", src: "/sponsors/food-packaging.svg" },
                   { name: "SourcingUp", src: "/sponsors/sourcingup.png" } 
                 ].map((sponsor) => (
                   <div key={sponsor.name} className="h-24 bg-white/5 border border-lime-400/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-3 relative group">
