@@ -42,7 +42,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/api/publicapi/foodday";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
-  // Referencia para datos de tracking (para evitar re-renders en el polling)
+  // Referencia para datos de tracking
   const trackingDataRef = useRef({ quantity, unitPrice, totalPrice, includeLunch });
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const increaseQuantity = () => setQuantity(prev => prev + 1);
   const decreaseQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
 
-  // POLLING: Consultar estado del pago cada 3 segundos
+  // POLLING: Consultar estado del pago
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -90,10 +90,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           
           if (res.ok) {
             const data = await res.json();
-            console.log("Respuesta real del backend:", data);
             
             // --- HARDCODE TEMPORAL ---
-            // Forzamos la respuesta a TRUE para simular éxito aunque no se pague
             const isPaid = true; // data.response === true;
             // -------------------------
 
@@ -101,10 +99,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               setBookingState('paid');
               clearInterval(interval);
               
-              // Datos para tracking desde la referencia
               const { quantity, unitPrice, totalPrice, includeLunch } = trackingDataRef.current;
 
-              // Google Analytics / DataLayer Tracking
               if (typeof window !== 'undefined') {
                 (window as any).dataLayer = (window as any).dataLayer || [];
                 (window as any).dataLayer.push({ 
@@ -140,7 +136,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
     setBookingState('creating');
     
     try {
-      // 1. Crear Orden (POST al Backend Real)
       const response = await fetch(`${API_URL}/crearOrden`, {
         method: 'POST',
         headers: {
@@ -167,13 +162,10 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
       const data = await response.json();
       console.log("📦 Orden creada:", data);
 
-      // 2. Procesar respuesta y redirigir
       if (data.orderid && data.paymentlink) {
         setOrderId(data.orderid);
         setPaymentLink(data.paymentlink);
         setBookingState('pending_payment');
-
-        // Abrir link de Mercado Pago
         window.open(data.paymentlink, '_blank');
       } else {
         throw new Error('La respuesta del servidor no contiene link de pago');
@@ -189,7 +181,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-4 sm:p-6">
-      {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/80 animate-fade-in"
         onClick={onClose}
@@ -247,7 +238,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Nombre de la Empresa</label>
-                <input required name="company" value={formData.company} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none transition-all min-h-[44px]" placeholder="Ej: PedidosYa, Logística SA..." />
+                <input required name="company" value={formData.company} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none transition-all min-h-[44px]" placeholder="Ej: Rappi" />
               </div>
               
               {/* Inputs Separados */}
@@ -264,12 +255,12 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Email Corporativo</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Email</label>
                   <input required name="email" value={formData.email} onChange={handleInputChange} type="email" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="nombre@empresa.com" />
                 </div>
                  <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Teléfono</label>
-                  <input required name="phone" value={formData.phone} onChange={handleInputChange} type="tel" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="+54 9..." />
+                  <input required name="phone" value={formData.phone} onChange={handleInputChange} type="tel" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="+54 9 11 6633-2233" />
                 </div>
               </div>
 
@@ -295,7 +286,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               >
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-gray-900 group-hover:text-brand-dark transition-colors">¿Incluir Almuerzo? (+ $8.000)</span>
-                  <p className="text-xs text-gray-500">Almuerzo gourmet durante el evento.</p>
+                  <p className="text-xs text-gray-500">Almuerzo durante el evento.</p>
                 </div>
                 <div className={`w-12 h-7 flex items-center rounded-full p-1 transition-colors duration-300 flex-shrink-0 ${includeLunch ? 'bg-brand-lime' : 'bg-gray-300'}`}>
                   <div className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300 ${includeLunch ? 'translate-x-5' : 'translate-x-0'}`} />
@@ -391,6 +382,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               </button>
             </div>
           )}
+
         </div>
       </div>
     </div>
