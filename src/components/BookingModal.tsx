@@ -391,7 +391,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               </button>
             </div>
           )}
-
         </div>
       </div>
     </div>
