@@ -1,6 +1,7 @@
 'use client';
-import { X, Check, Shield, Loader2, ExternalLink, Minus, Plus } from 'lucide-react';
+import { X, Check, Shield, Loader2, ExternalLink, Minus, Plus, ArrowRight } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link'; // Importamos Link para la navegación
 
 interface ModalProps {
   isOpen: boolean;
@@ -345,7 +346,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </div>
           )}
 
-          {/* 4. ÉXITO */}
+          {/* 4. ÉXITO (BOTÓN NUEVO AQUÍ) */}
           {bookingState === 'paid' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-6 text-center animate-in fade-in zoom-in duration-300">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
@@ -354,13 +355,23 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               <div>
                 <h4 className="text-2xl font-black text-gray-900 mb-2">¡Pago Exitoso!</h4>
                 <p className="text-gray-600">
-                  Tu entrada ha sido confirmada. <br/>
-                  Te enviamos el comprobante a <strong>{formData.email}</strong>
+                  Tu entrada ha sido confirmada.
                 </p>
               </div>
+              
+              {/* --- BOTÓN DE FLUJO --- */}
+              <Link 
+                href={`/success/${orderId}?qty=${quantity}`} // Pasamos la cantidad para la simulación
+                className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-brand-lime/20 flex items-center justify-center gap-2"
+                onClick={onClose}
+              >
+                IR A MIS ENTRADAS
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              
               <button 
                 onClick={onClose}
-                className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all"
+                className="text-gray-400 hover:text-gray-600 text-sm font-medium"
               >
                 Cerrar
               </button>

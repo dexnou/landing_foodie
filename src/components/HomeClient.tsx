@@ -10,7 +10,7 @@ import { ArrowRight, Play, MapPin, Calendar, CheckCircle2, Star, Shield, Award, 
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const VIDEO_ID = "dQw4w9WgXcQ";
+  const VIDEO_ID = "Kjtk3NeKy-A";
 
   // --- FUNCIÓN MAILTO (NATIVA) ---
   const handleSponsorSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -348,13 +348,13 @@ Saludos.`
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                     <Building2 className="w-3 h-3" /> Empresa
                   </label>
-                  <input type="text" name="empresa" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="Tu Empresa SA" />
+                  <input type="text" name="empresa" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="Tu Empresa" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                     <Phone className="w-3 h-3" /> Teléfono
                   </label>
-                  <input type="tel" name="telefono" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="+54 9 11..." />
+                  <input type="tel" name="telefono" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="+54 9 11 6633-2244" />
                 </div>
               </div>
 
