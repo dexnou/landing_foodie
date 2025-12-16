@@ -158,7 +158,7 @@ Saludos.`
                       <Play className="w-8 h-8 fill-current ml-1" />
                    </div>
                    <span className="absolute bottom-8 text-sm font-bold tracking-widest text-white z-30 uppercase text-center px-4">
-                     VER RECAP 2025
+                     Presentación 2026 - Food Delivery Day
                    </span>
                  </button>
                ) : (
