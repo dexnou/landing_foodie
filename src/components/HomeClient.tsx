@@ -63,9 +63,11 @@ Saludos.`
             <span className="text-xs font-bold tracking-wider text-gray-300">ARGENTINA</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter mb-6 uppercase">
-            FOOD DELIVERY <br /> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-lime to-white">DAY 2026</span>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-none mb-6 uppercase pb-2">
+            FOOD DELIVERY <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-lime to-white inline-block pb-1  ">
+              DAY 2026
+            </span>
           </h1>
           
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-[1.2]">
@@ -108,8 +110,10 @@ Saludos.`
 
       {/* 2. VIDEO & EXPERIENCE */}
       <section id="evento" className="py-24 px-6 relative border-t border-white/5 bg-black/40">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          
+          {/* Columna Texto */}
+          <div className="order-2 md:order-1">
             <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">CONECTANDO <span className="text-brand-lime">EL FUTURO</span></h2>
             <p className="text-gray-400 text-lg mb-8 leading-relaxed">
               Un espacio único donde dueños de restaurantes, gerentes de logística y líderes de tecnología comparten las claves del éxito en la era digital.
@@ -138,31 +142,38 @@ Saludos.`
             </div>
           </div>
 
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl aspect-video bg-gray-900 group">
-             {!isPlaying ? (
-               <button 
-                 onClick={() => setIsPlaying(true)}
-                 className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-20"
-               >
-                 <div className="absolute inset-0 bg-brand-lime/10 group-hover:bg-brand-lime/5 transition-colors z-10" />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent z-0" />
-                 <div className="relative z-30 w-20 h-20 bg-brand-lime text-brand-dark rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(190,242,100,0.4)]">
-                    <Play className="w-8 h-8 fill-current ml-1" />
-                 </div>
-                 <span className="absolute bottom-8 text-sm font-bold tracking-widest text-white z-30 uppercase">
-                   VER PRESENTACIÓN 2026
-                 </span>
-               </button>
-             ) : (
-               <iframe 
-                 className="w-full h-full animate-in fade-in duration-500"
-                 src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0`} 
-                 title="Food Delivery Day Aftermovie" 
-                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                 allowFullScreen
-               ></iframe>
-             )}
+          {/* Columna Video SHORT (Vertical) - Corregido sin saltos de línea en className */}
+          <div className="order-1 md:order-2 flex justify-center">
+             <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-gray-900 group w-full max-w-[320px] aspect-[9/16] mx-auto md:mr-0 md:ml-auto">
+               
+               {!isPlaying ? (
+                 <button 
+                   onClick={() => setIsPlaying(true)}
+                   className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-20"
+                 >
+                   <div className="absolute inset-0 bg-brand-lime/5 group-hover:bg-brand-lime/10 transition-colors z-10" />
+                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0" />
+
+                   <div className="relative z-30 w-20 h-20 bg-brand-lime text-brand-dark rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(190,242,100,0.4)]">
+                      <Play className="w-8 h-8 fill-current ml-1" />
+                   </div>
+                   <span className="absolute bottom-8 text-sm font-bold tracking-widest text-white z-30 uppercase text-center px-4">
+                     Presentación 2026 - Food Delivery Day
+                   </span>
+                 </button>
+               ) : (
+                 <iframe 
+                   className="w-full h-full animate-in fade-in duration-500"
+                   src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0&modestbranding=1&playsinline=1`} 
+                   title="Food Delivery Day Aftermovie" 
+                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                   allowFullScreen
+                   style={{ border: 0 }}
+                 ></iframe>
+               )}
+            </div>
           </div>
+
         </div>
       </section>
 
@@ -290,15 +301,16 @@ Saludos.`
                 <h3 className="text-brand-lime font-bold text-lg tracking-widest uppercase">Sponsors Emprendedor</h3>
                 <Rocket className="w-5 h-5 text-brand-lime" />
               </div>
-              {/* Grid de 4 columnas en Desktop para que queden en una línea */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto opacity-90">
+              
+              <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto opacity-90">
                 {[
                   { name: "RapiBoy", src: "/sponsors/rapiboy.png" },
                   { name: "MasDelivery", src: "/sponsors/masdelivery.png" },
                   { name: "Food Packaging", src: "/sponsors/food-packaging.svg" },
-                  { name: "SourcingUp", src: "/sponsors/sourcingup.png" } 
+                  { name: "SourcingUp", src: "/sponsors/sourcingup.png" },
+                  { name: "OmAgency", src: "/sponsors/omagency.png" }
                 ].map((sponsor) => (
-                  <div key={sponsor.name} className="h-24 bg-white/5 border border-lime-400/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-3 relative group">
+                  <div key={sponsor.name} className="h-24 w-36 md:w-48 bg-white/5 border border-lime-400/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-3 relative group">
                     <div className="relative w-full h-full">
                       <Image 
                         src={sponsor.src} 
