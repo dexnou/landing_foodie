@@ -163,7 +163,7 @@ export default function NominatePage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase flex gap-2 tracking-wider"><Phone className="w-3 h-3" /> Teléfono</label>
-                  <input required type="tel" value={attendee.phone} onChange={(e) => handleInputChange(index, 'phone', e.target.value)} className="w-full bg-black/30 border border-gray-700 rounded-lg p-3 text-white focus:ring-1 focus:ring-brand-lime focus:border-brand-lime outline-none transition-all placeholder:text-gray-700" placeholder="+54 9 11..." />
+                  <input required type="tel" value={attendee.phone} onChange={(e) => handleInputChange(index, 'phone', e.target.value)} className="w-full bg-black/30 border border-gray-700 rounded-lg p-3 text-white focus:ring-1 focus:ring-brand-lime focus:border-brand-lime outline-none transition-all placeholder:text-gray-700" placeholder="+54 9 11 6633-2211" />
                 </div>
               </div>
             </div>
