@@ -12,10 +12,21 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const VIDEO_ID = "Kjtk3NeKy-A";
 
-  // --- FUNCIÓN MAILTO (NATIVA) ---
-  const handleSponsorSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // Sponsor form state
+  const [sponsorSubmitState, setSponsorSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [sponsorSubmitError, setSponsorSubmitError] = useState<string | null>(null);
+
+  // URL del Backend (misma convención que BookingModal)
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/publicapi/foodday";
+  const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
+
+  const handleSponsorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    setSponsorSubmitState('submitting');
+    setSponsorSubmitError(null);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     
     const nombre = formData.get('nombre') as string;
     const puesto = formData.get('puesto') as string;
@@ -23,25 +34,34 @@ export default function Home() {
     const telefono = formData.get('telefono') as string;
     const email = formData.get('email') as string;
 
-    const subject = encodeURIComponent(`Solicitud de Sponsor - ${empresa}`);
+    try {
+      const res = await fetch(`${API_URL}/agregarSponsors`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          client: 'intercap',
+          Authorization: `Bearer ${API_TOKEN}`,
+        },
+        body: JSON.stringify({
+          nombre,
+          email,
+          telefono,
+          puesto,
+          empresa,
+        }),
+      });
 
-    const body = encodeURIComponent(
-`Hola, estoy interesado en ser sponsor del Food Delivery Day 2026.
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(text || `Error ${res.status} al enviar la solicitud.`);
+      }
 
-Mis datos son:
-------------------------------------------------
-Nombre: ${nombre}
-Puesto: ${puesto}
-Empresa: ${empresa}
-Teléfono: ${telefono}
-Email: ${email}
-------------------------------------------------
-
-Quedo a la espera de la propuesta comercial.
-Saludos.`
-    );
-
-    window.location.href = `mailto:info@fooddeliveryday.com.ar?subject=${subject}&body=${body}`;
+      setSponsorSubmitState('success');
+      form.reset();
+    } catch (err) {
+      setSponsorSubmitState('error');
+      setSponsorSubmitError(err instanceof Error ? err.message : 'Ocurrió un error al enviar la solicitud.');
+    }
   };
 
   return (
@@ -377,8 +397,24 @@ Saludos.`
                 <input type="email" name="email" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="vos@empresa.com" />
               </div>
 
-              <button type="submit" className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-4 rounded-xl transition-all uppercase tracking-wide">
-                Enviar Solicitud
+              {sponsorSubmitState === 'success' && (
+                <div className="text-sm text-green-400 font-bold">
+                  ¡Solicitud enviada! En breve te contactamos con la propuesta comercial.
+                </div>
+              )}
+
+              {sponsorSubmitState === 'error' && sponsorSubmitError && (
+                <div className="text-sm text-red-400 font-bold">
+                  {sponsorSubmitError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={sponsorSubmitState === 'submitting'}
+                className="w-full bg-brand-lime hover:bg-brand-limeHover disabled:opacity-60 disabled:cursor-not-allowed text-brand-dark font-black py-4 rounded-xl transition-all uppercase tracking-wide"
+              >
+                {sponsorSubmitState === 'submitting' ? 'Enviando…' : 'Enviar Solicitud'}
               </button>
             </form>
           </div>

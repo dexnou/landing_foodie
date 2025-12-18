@@ -15,7 +15,7 @@ export default function SuccessPage() {
 
   const [status, setStatus] = useState<'loading' | 'paid' | 'failed'>('loading');
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/api/publicapi/foodday";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/publicapi/foodday";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
   useEffect(() => {
