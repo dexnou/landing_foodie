@@ -5,13 +5,22 @@ import Header from '@/components/Header';
 import BookingModal from '@/components/BookingModal';
 import AccordionItem from '@/components/Accordion';
 import Image from 'next/image';
-import { ArrowRight, Play, MapPin, Calendar, CheckCircle2, Star, Shield, Award, Rocket, Mail, User, Briefcase, Phone, Building2 } from 'lucide-react';
+import { 
+  ArrowRight, Play, MapPin, Calendar, CheckCircle2, Star, Shield, 
+  Award, Rocket, Mail, User, Briefcase, Phone, Building2, 
+  Loader2, Check, AlertCircle 
+} from 'lucide-react';
 
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  
+  // Estado para manejar el envío del formulario
+  const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
   const VIDEO_ID = "Kjtk3NeKy-A";
 
+<<<<<<< HEAD
   // Sponsor form state
   const [sponsorSubmitState, setSponsorSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [sponsorSubmitError, setSponsorSubmitError] = useState<string | null>(null);
@@ -27,14 +36,28 @@ export default function Home() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+=======
+  // Configuración API
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/api/publicapi/foodday";
+  const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
+
+  // --- FUNCIÓN DE ENVÍO (FETCH A API) ---
+  const handleSponsorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFormStatus('loading');
+>>>>>>> refs/remotes/origin/main
     
-    const nombre = formData.get('nombre') as string;
-    const puesto = formData.get('puesto') as string;
-    const empresa = formData.get('empresa') as string;
-    const telefono = formData.get('telefono') as string;
-    const email = formData.get('email') as string;
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      nombre: formData.get('nombre'),
+      puesto: formData.get('puesto'),
+      empresa: formData.get('empresa'),
+      telefono: formData.get('telefono'),
+      email: formData.get('email')
+    };
 
     try {
+<<<<<<< HEAD
       const res = await fetch(`${API_URL}/agregarSponsors`, {
         method: 'POST',
         headers: {
@@ -61,6 +84,28 @@ export default function Home() {
     } catch (err) {
       setSponsorSubmitState('error');
       setSponsorSubmitError(err instanceof Error ? err.message : 'Ocurrió un error al enviar la solicitud.');
+=======
+      // Endpoint para enviar el contacto
+      const response = await fetch(`${API_URL}/enviarContacto`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'client': 'intercap',
+          'Authorization': `Bearer ${API_TOKEN}`
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+
+      setFormStatus('success');
+      
+    } catch (error) {
+      console.error("Error enviando formulario:", error);
+      setFormStatus('error');
+>>>>>>> refs/remotes/origin/main
     }
   };
 
@@ -80,7 +125,7 @@ export default function Home() {
             <span className="text-xs font-bold tracking-wider text-gray-300">2026</span>
             <span className="w-1 h-1 rounded-full bg-gray-600" />
             <MapPin className="w-4 h-4 text-brand-lime" />
-            <span className="text-xs font-bold tracking-wider text-gray-300">ARGENTINA</span>
+            <span className="text-xs font-bold tracking-wider text-gray-300">JANO'S COSTANERA</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-none mb-6 uppercase pb-2">
@@ -162,7 +207,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Columna Video SHORT (Vertical) - Corregido sin saltos de línea en className */}
+          {/* Columna Video SHORT (Vertical) */}
           <div className="order-1 md:order-2 flex justify-center">
              <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-gray-900 group w-full max-w-[320px] aspect-[9/16] mx-auto md:mr-0 md:ml-auto">
                
@@ -171,15 +216,20 @@ export default function Home() {
                    onClick={() => setIsPlaying(true)}
                    className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-20"
                  >
-                   <div className="absolute inset-0 bg-brand-lime/5 group-hover:bg-brand-lime/10 transition-colors z-10" />
-                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0" />
+                   {/* IMAGEN DE PORTADA */}
+                   <Image 
+                     src="/assets/images/video-cover.jpg"
+                     alt="Portada Video Food Delivery Day" 
+                     fill 
+                     className="object-cover transition-transform duration-700 group-hover:scale-105"
+                     priority
+                   />
+                   
+                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors z-10" />
 
                    <div className="relative z-30 w-20 h-20 bg-brand-lime text-brand-dark rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(190,242,100,0.4)]">
                       <Play className="w-8 h-8 fill-current ml-1" />
                    </div>
-                   <span className="absolute bottom-8 text-sm font-bold tracking-widest text-white z-30 uppercase text-center px-4">
-                     Presentación 2026 - Food Delivery Day
-                   </span>
                  </button>
                ) : (
                  <iframe 
@@ -359,44 +409,87 @@ export default function Home() {
               </p>
             </div>
 
-            <form className="space-y-6" onSubmit={handleSponsorSubmit}>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                    <User className="w-3 h-3" /> Nombre y Apellido
-                  </label>
-                  <input type="text" name="nombre" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="Juan Pérez" />
+            {/* ESTADOS DEL FORMULARIO */}
+            {formStatus === 'success' ? (
+              <div className="flex flex-col items-center justify-center py-10 animate-in fade-in zoom-in">
+                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
+                  <Check className="w-10 h-10 text-green-500" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                    <Briefcase className="w-3 h-3" /> Puesto
-                  </label>
-                  <input type="text" name="puesto" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="Gerente de Marketing" />
-                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">¡Solicitud Enviada!</h3>
+                <p className="text-gray-400 text-center max-w-md mb-6">
+                  Muchas gracias por tu interés. Hemos recibido tus datos y te enviaremos la propuesta comercial a la brevedad.
+                </p>
+                <button 
+                  onClick={() => setFormStatus('idle')}
+                  className="text-brand-lime hover:underline font-bold"
+                >
+                  Enviar otra solicitud
+                </button>
               </div>
+            ) : (
+              <form className="space-y-6" onSubmit={handleSponsorSubmit}>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <User className="w-3 h-3" /> Nombre y Apellido
+                    </label>
+                    <input type="text" name="nombre" required disabled={formStatus === 'loading'} className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none disabled:opacity-50" placeholder="Juan Pérez" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <Briefcase className="w-3 h-3" /> Puesto
+                    </label>
+                    <input type="text" name="puesto" required disabled={formStatus === 'loading'} className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none disabled:opacity-50" placeholder="Gerente de Marketing" />
+                  </div>
+                </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <Building2 className="w-3 h-3" /> Empresa
+                    </label>
+                    <input type="text" name="empresa" required disabled={formStatus === 'loading'} className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none disabled:opacity-50" placeholder="Tu Empresa" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                      <Phone className="w-3 h-3" /> Teléfono
+                    </label>
+                    <input type="tel" name="telefono" required disabled={formStatus === 'loading'} className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none disabled:opacity-50" placeholder="+54 9 11 6633-2244" />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                    <Building2 className="w-3 h-3" /> Empresa
+                    <Mail className="w-3 h-3" /> Email
                   </label>
-                  <input type="text" name="empresa" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="Tu Empresa" />
+                  <input type="email" name="email" required disabled={formStatus === 'loading'} className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none disabled:opacity-50" placeholder="vos@empresa.com" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                    <Phone className="w-3 h-3" /> Teléfono
-                  </label>
-                  <input type="tel" name="telefono" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="+54 9 11 6633-2244" />
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                  <Mail className="w-3 h-3" /> Email
-                </label>
-                <input type="email" name="email" required className="w-full bg-black/20 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-brand-lime outline-none" placeholder="vos@empresa.com" />
-              </div>
+                {formStatus === 'error' && (
+                  <div className="flex items-center gap-2 text-red-400 text-sm bg-red-900/20 p-3 rounded-lg border border-red-900/50">
+                    <AlertCircle className="w-4 h-4" />
+                    Hubo un error al enviar el mensaje. Por favor intentá nuevamente.
+                  </div>
+                )}
 
+                <button 
+                  type="submit" 
+                  disabled={formStatus === 'loading'}
+                  className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-4 rounded-xl transition-all uppercase tracking-wide flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {formStatus === 'loading' ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    'Enviar Solicitud'
+                  )}
+                </button>
+              </form>
+            )}
+
+<<<<<<< HEAD
               {sponsorSubmitState === 'success' && (
                 <div className="text-sm text-green-400 font-bold">
                   ¡Solicitud enviada! En breve te contactamos con la propuesta comercial.
@@ -417,6 +510,8 @@ export default function Home() {
                 {sponsorSubmitState === 'submitting' ? 'Enviando…' : 'Enviar Solicitud'}
               </button>
             </form>
+=======
+>>>>>>> refs/remotes/origin/main
           </div>
         </div>
       </section>
@@ -454,11 +549,11 @@ export default function Home() {
             </AccordionItem>
 
             <AccordionItem title="¿Dónde se realiza el evento?">
-              El evento se realiza en Buenos Aires, Argentina. La ubicación exacta será comunicada a todos los registrados por email una semana antes del evento.
+              El evento se realizará en <strong>Jano's Costanera</strong> (Av. Costanera Rafael Obligado 6340, CABA). Un espacio exclusivo frente al río con estacionamiento privado y fácil acceso.
             </AccordionItem>
 
             <AccordionItem title="¿Hay estacionamiento disponible?">
-              Sí, el venue cuenta con estacionamiento para los asistentes. También hay opciones de transporte público cercanas que compartiremos en el email de confirmación.
+              Sí, el venue cuenta con estacionamiento privado para los asistentes. También hay opciones de transporte público cercanas que compartiremos en el email de confirmación.
             </AccordionItem>
 
             <AccordionItem title="¿Puedo cambiar o cancelar mi entrada?">
@@ -523,7 +618,7 @@ export default function Home() {
                   </a>
                 </li>
                 <li>
-                  <span className="block">Buenos Aires, Argentina</span>
+                  <span className="block">Av. Costanera Rafael Obligado 6340, CABA</span>
                 </li>
               </ul>
             </address>

@@ -1,7 +1,7 @@
 'use client';
 import { X, Check, Shield, Loader2, ExternalLink, Minus, Plus, ArrowRight } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link'; // Importamos Link para la navegación
+import Link from 'next/link';
 
 interface ModalProps {
   isOpen: boolean;
@@ -92,9 +92,9 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           if (res.ok) {
             const data = await res.json();
             
-            // --- HARDCODE TEMPORAL ---
-            const isPaid = true; // data.response === true;
-            // -------------------------
+            // Verificamos la respuesta real del backend
+            // Se asume que data.response es true cuando el pago impactó
+            const isPaid = data.response === true;
 
             if (isPaid) {
               setBookingState('paid');
@@ -120,6 +120,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           }
         } catch (error) {
           console.error("Error verificando pago:", error);
+          // No cambiamos a error aquí para no interrumpir el polling por un fallo de red momentáneo
         }
       }, 3000); 
     }
@@ -361,7 +362,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               
               {/* --- BOTÓN DE FLUJO --- */}
               <Link 
-                href={`/success/${orderId}?qty=${quantity}`} // Pasamos la cantidad para la simulación
+                href={`/success/${orderId}?qty=${quantity}`} // Pasamos la cantidad
                 className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-brand-lime/20 flex items-center justify-center gap-2"
                 onClick={onClose}
               >
