@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation'; // Agregamos useSearchParams para leer ?qty=
+import { useParams, useSearchParams } from 'next/navigation'; 
 import Link from 'next/link';
 import { Check, X, Loader2, ArrowRight, UserPlus } from 'lucide-react';
 
 export default function SuccessPage() {
   const params = useParams();
-  const searchParams = useSearchParams(); // Hook para leer la URL
+  const searchParams = useSearchParams(); 
   const orderId = Array.isArray(params.id) ? params.id[0] : params.id;
   
   // Obtenemos la cantidad de la URL, si no existe asumimos 1
@@ -23,8 +23,7 @@ export default function SuccessPage() {
       if (!orderId) return;
 
       try {
-        // Hacemos la llamada real para no romper el flujo, pero ignoraremos el resultado negativo
-        await fetch(`${API_URL}/checkIfPaid`, {
+        const res = await fetch(`${API_URL}/checkIfPaid`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -34,25 +33,33 @@ export default function SuccessPage() {
           body: JSON.stringify({ orderid: Number(orderId) })
         });
 
-        // --- BYPASS: FORZAMOS SIEMPRE A PAGO EXITOSO ---
-        // Ignoramos la respuesta real (data.response) y ponemos 'paid' directamente.
-        setTimeout(() => {
-            setStatus('paid');
+        if (res.ok) {
+            const data = await res.json();
             
-            if (typeof window !== 'undefined') {
-                (window as any).dataLayer = (window as any).dataLayer || [];
-                (window as any).dataLayer.push({ 
-                  event: 'purchase_verified',
-                  order_id: orderId,
-                  status: 'success'
-                });
+            // Verificación real del estado del pago
+            if (data.response === true) {
+                setStatus('paid');
+                
+                if (typeof window !== 'undefined') {
+                    (window as any).dataLayer = (window as any).dataLayer || [];
+                    (window as any).dataLayer.push({ 
+                      event: 'purchase_verified',
+                      order_id: orderId,
+                      status: 'success'
+                    });
+                }
+            } else {
+                // El backend dice que NO está pagado
+                setStatus('failed');
             }
-        }, 1000); // Pequeño delay para simular carga
+        } else {
+            // Error HTTP (500, 404, etc.)
+            setStatus('failed');
+        }
 
       } catch (error) {
-        console.error("Error (ignorado para demo):", error);
-        // Incluso si falla el fetch, forzamos éxito para que puedas probar
-        setStatus('paid'); 
+        console.error("Error verificando pago:", error);
+        setStatus('failed'); 
       }
     };
 
@@ -75,7 +82,7 @@ export default function SuccessPage() {
           </div>
         )}
 
-        {/* PAGO EXITOSO (Siempre se mostrará esto ahora) */}
+        {/* PAGO EXITOSO */}
         {status === 'paid' && (
           <div className="py-6 flex flex-col items-center animate-in zoom-in duration-300">
             <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
@@ -112,17 +119,23 @@ export default function SuccessPage() {
           </div>
         )}
 
-        {/* ERROR (Ya no deberías ver esto) */}
+        {/* ERROR (PAGO NO CONFIRMADO O FALLIDO) */}
         {status === 'failed' && (
           <div className="py-6 flex flex-col items-center animate-in shake">
             <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mb-6">
               <X className="w-12 h-12 text-red-500" strokeWidth={3} />
             </div>
             <h1 className="text-3xl font-black text-white mb-2">Pago no confirmado</h1>
-            <p className="text-gray-400 mb-8">No detectamos el pago de la orden #{orderId}.</p>
+            <p className="text-gray-400 mb-8">No detectamos el pago de la orden #{orderId} o aún está pendiente.</p>
             <button onClick={() => window.location.reload()} className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-xl transition-all">
-              Reintentar
+              Reintentar Verificación
             </button>
+            <Link 
+              href="/" 
+              className="text-gray-500 hover:text-white text-sm font-bold transition-colors py-4 block"
+            >
+              Volver al inicio
+            </Link>
           </div>
         )}
 
