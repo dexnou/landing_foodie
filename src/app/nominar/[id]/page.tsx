@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useSearchParams, useRouter } from 'next/navigation'; // Agregamos useRouter
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { User, Mail, Phone, Ticket, ArrowRight, Loader2, Check, Download } from 'lucide-react';
+import { User, Mail, Phone, Ticket, ArrowRight, Loader2, Check, Download, AlertCircle } from 'lucide-react';
 
 interface AttendeeData {
   id: number | string; 
@@ -16,7 +16,7 @@ interface AttendeeData {
 export default function NominatePage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const router = useRouter(); // Instancia del router
+  const router = useRouter();
   const orderId = params.id;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +36,7 @@ export default function NominatePage() {
 
         console.log(`🔒 Verificando estado del pago para orden: ${orderId}`);
 
-        // PASO 1: Verificar si está pagado
+        // PASO 1: Verificar pago y si ya fue editado
         const payRes = await fetch(`${API_URL}/checkIfPaid`, {
           method: 'POST',
           headers: {
@@ -50,17 +50,24 @@ export default function NominatePage() {
         if (!payRes.ok) throw new Error("Error al verificar pago");
         
         const payData = await payRes.json();
+        console.log("💳 Estado del pago:", payData);
         
-        // Si NO está pagada, cortamos el flujo
+        // 1.1 Si NO está pagada
         if (payData.response !== true) {
-          console.warn("⛔ La orden no está pagada. Redirigiendo...");
           alert("Esta orden no se encuentra abonada o confirmada.");
-          router.push('/'); // Redirigimos al home
+          router.push('/'); 
           return;
         }
 
-        // PASO 2: Si está pagada, traemos los productos
-        console.log(`📡 Pago confirmado. Buscando entradas...`);
+        // 1.2 Si YA fue editada (entriesEdited === true)
+        if (payData.entriesEdited === true) {
+          alert("Las entradas de esta orden ya han sido asignadas previamente. No se pueden volver a editar.");
+          router.push('/'); // <--- CAMBIO: Redirige al Home
+          return;
+        }
+
+        // PASO 2: Si está pagada y NO editada, traemos los productos para llenar
+        console.log(`📡 Pago confirmado y habilitado para editar. Buscando entradas...`);
         
         const response = await fetch(`${API_URL}/traerProdsOrden/${orderId}`, {
           method: 'GET',
@@ -73,8 +80,7 @@ export default function NominatePage() {
 
         if (response.ok) {
           const resJson = await response.json();
-          console.log("🎟️ Respuesta Backend:", resJson);
-
+          
           const safeValue = (val: any) => {
             if (val === undefined || val === null) return "";
             if (String(val) === "NULL") return "";
@@ -146,11 +152,12 @@ export default function NominatePage() {
     setAttendees(newAttendees);
   };
 
-  // --- 2. UPDATE DE INFO (PUT) ---
+  // --- 2. UPDATE DE INFO (BULK PUT) ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Validación estricta
     const isValid = attendees.every(a => 
       a.firstName.trim() !== '' && 
       a.lastName.trim() !== '' && 
@@ -159,52 +166,67 @@ export default function NominatePage() {
     );
 
     if (!isValid) {
-      alert("Por favor completá todos los campos.");
+      alert("Por favor completá TODOS los campos de todas las entradas para continuar.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!confirm("¿Confirmás que los datos son correctos? Una vez enviadas, las entradas no se podrán volver a editar.")) {
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const updatePromises = attendees.map(attendee => {
-        
+      // Payload
+      const entradasPayload = attendees.map(attendee => {
         if (!attendee.id || String(attendee.id).startsWith('temp-')) {
-            console.error("❌ Error: Intentando actualizar sin ID válido:", attendee);
-            throw new Error("ID de entrada inválido");
+           throw new Error(`ID de entrada inválido para: ${attendee.firstName}`);
         }
 
-        const url = `${API_URL}/actualizarProdInfo/${attendee.id}`;
         const fullName = `${attendee.firstName} ${attendee.lastName}`.trim();
 
-        console.log(`📤 Enviando PUT a: ${url}`, { nombre: fullName, ...attendee });
-
-        return fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'client': process.env.CLIENT || 'intercap',
-            'Authorization': `Bearer ${API_TOKEN}`
-          },
-          body: JSON.stringify({
-            nombre: fullName,
-            mail: attendee.email,
-            telefono: attendee.phone
-          })
-        });
+        return {
+          prodinfoid: attendee.id,
+          nombre: fullName,
+          mail: attendee.email,
+          telefono: attendee.phone
+        };
       });
 
-      await Promise.all(updatePromises);
-      
-      console.log("✅ Info de productos actualizada");
-      
-      setTimeout(() => {
-        setIsSubmitting(false);
+      console.log("📤 Enviando Entradas (Bulk):", entradasPayload);
+
+      const response = await fetch(`${API_URL}/actualizarProdInfo`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'client': process.env.CLIENT || 'intercap',
+          'Authorization': `Bearer ${API_TOKEN}`
+        },
+        body: JSON.stringify({
+          entradas: entradasPayload
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        console.log("✅ Entradas actualizadas exitosamente:", data);
         setIsCompleted(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 500);
+      } 
+      else {
+        console.error("❌ Error del backend:", data);
+        if (data.alreadyEdited) {
+          alert(data.message || "Error: Las entradas ya fueron editadas anteriormente.");
+          router.push('/'); // <--- CAMBIO: Redirige al Home
+        } else {
+          throw new Error(data.message || "Error desconocido al actualizar entradas");
+        }
+      }
 
     } catch (error) {
-      console.error("Error actualizando info:", error);
-      alert("Hubo un error al guardar los datos.");
+      console.error("Error en el submit:", error);
+      alert("Hubo un error al guardar los datos. Por favor intentá nuevamente.");
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -228,7 +250,7 @@ export default function NominatePage() {
           ¡Datos <span className="text-brand-lime">Guardados!</span>
         </h1>
         <p className="text-gray-400 text-lg max-w-lg mb-10">
-          La información de las entradas ha sido actualizada correctamente.
+          La información de las entradas ha sido actualizada correctamente y los QRs serán enviados a la brevedad.
         </p>
         
         <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
@@ -263,6 +285,11 @@ export default function NominatePage() {
             Tenés <strong>{attendees.length} {attendees.length === 1 ? 'cupo' : 'cupos'}</strong> disponibles. <br className="hidden md:block"/>
             Completá los datos para generar los QRs de acceso.
           </p>
+          
+          <div className="mt-4 flex items-center justify-center gap-2 text-yellow-500 bg-yellow-500/10 p-3 rounded-lg border border-yellow-500/20 max-w-lg mx-auto text-sm">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span className="text-left md:text-center">Atención: Una vez confirmados los datos, no podrán volver a editarse.</span>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
