@@ -40,7 +40,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const totalPrice = unitPrice * quantity;
   
   // URL del Backend
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/publicapi/foodday";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
   // Referencia para datos de tracking
