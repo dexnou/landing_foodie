@@ -75,7 +75,8 @@ export default function Home() {
           
           <div className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 bg-white/5 rounded-full backdrop-blur-md mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Calendar className="w-4 h-4 text-brand-lime" />
-            <span className="text-xs font-bold tracking-wider text-gray-300">2026</span>
+            {/* --- FECHA ACTUALIZADA AQUÍ --- */}
+            <span className="text-xs font-bold tracking-wider text-gray-300 uppercase">11 DE MARZO, 2026</span>
             <span className="w-1 h-1 rounded-full bg-gray-600" />
             <MapPin className="w-4 h-4 text-brand-lime" />
             <span className="text-xs font-bold tracking-wider text-gray-300">JANO'S COSTANERA</span>
