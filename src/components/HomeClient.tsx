@@ -21,7 +21,7 @@ export default function Home() {
   const VIDEO_ID = "Kjtk3NeKy-A";
 
   // Configuración API (misma convención que BookingModal)
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
   const handleSponsorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
