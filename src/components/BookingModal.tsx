@@ -83,7 +83,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'client': 'intercap',             
+              'client': process.env.CLIENT || 'intercap',             
               'Authorization': `Bearer ${API_TOKEN}`
             },
             body: JSON.stringify({ orderid: orderId })
@@ -142,7 +142,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'client': 'intercap',
+          'client': process.env.CLIENT || 'intercap',
           'Authorization': `Bearer ${API_TOKEN}`
         },
         body: JSON.stringify({
