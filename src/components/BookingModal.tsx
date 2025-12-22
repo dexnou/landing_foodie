@@ -40,7 +40,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const totalPrice = unitPrice * quantity;
   
   // URL del Backend
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/publicapi/foodday";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
   // Referencia para datos de tracking
@@ -83,7 +83,11 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+<<<<<<< HEAD
               'client': 'foodday',             
+=======
+              'client': process.env.CLIENT || 'intercap',             
+>>>>>>> refs/remotes/origin/main
               'Authorization': `Bearer ${API_TOKEN}`
             },
             body: JSON.stringify({ orderid: orderId })
@@ -142,7 +146,11 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+<<<<<<< HEAD
           'client': 'foodday',
+=======
+          'client': process.env.CLIENT || 'intercap',
+>>>>>>> refs/remotes/origin/main
           'Authorization': `Bearer ${API_TOKEN}`
         },
         body: JSON.stringify({

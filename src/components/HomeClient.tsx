@@ -21,7 +21,7 @@ export default function Home() {
   const VIDEO_ID = "Kjtk3NeKy-A";
 
   // Configuración API (misma convención que BookingModal)
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/publicapi/foodday";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
   const handleSponsorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -43,7 +43,11 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+<<<<<<< HEAD
           client: 'foodday',
+=======
+          client: process.env.CLIENT || 'intercap',
+>>>>>>> refs/remotes/origin/main
           Authorization: `Bearer ${API_TOKEN}`,
         },
         body: JSON.stringify(data),
@@ -75,7 +79,8 @@ export default function Home() {
           
           <div className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 bg-white/5 rounded-full backdrop-blur-md mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Calendar className="w-4 h-4 text-brand-lime" />
-            <span className="text-xs font-bold tracking-wider text-gray-300">2026</span>
+            {/* --- FECHA ACTUALIZADA AQUÍ --- */}
+            <span className="text-xs font-bold tracking-wider text-gray-300 uppercase">11 DE MARZO, 2026</span>
             <span className="w-1 h-1 rounded-full bg-gray-600" />
             <MapPin className="w-4 h-4 text-brand-lime" />
             <span className="text-xs font-bold tracking-wider text-gray-300">JANO'S COSTANERA</span>
@@ -291,19 +296,21 @@ export default function Home() {
             </div>
           </div>
 
-          {/* SPONSORS BRONCE */}
+          {/* SPONSORS BRONCE (MODIFICADO A FLEX) */}
           <div className="mb-16 border-t border-white/5 pt-12">
              <div className="flex items-center justify-center gap-2 mb-8 drop-shadow-[0_0_12px_rgba(194,65,12,0.6)]">
                 <Award className="w-5 h-5 text-orange-700" />
                 <h3 className="text-orange-700 font-bold text-lg tracking-widest uppercase">Sponsors Bronce</h3>
                 <Award className="w-5 h-5 text-orange-700" />
               </div>
-              <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto opacity-90">
+              {/* CAMBIO: Se cambió 'grid grid-cols-2' por 'flex flex-wrap' para que los items fluyan */}
+              <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto opacity-90">
                 {[
                   { name: "McCain", src: "/sponsors/mccainn.png" },
-                  { name: "Cabify", src: "/sponsors/cabify.png" }
+                  { name: "Cabify", src: "/sponsors/cabify.png" },
+                  { name: "Guapaletas", src: "/sponsors/guapaletas.png" },
                 ].map((sponsor) => (
-                  <div key={sponsor.name} className="h-28 bg-white/5 border border-orange-800/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-4 relative group">
+                  <div key={sponsor.name} className="h-28 w-60 bg-white/5 border border-orange-800/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-4 relative group">
                     <div className="relative w-full h-full">
                       <Image 
                         src={sponsor.src} 
