@@ -43,7 +43,7 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          client: process.env.CLIENT || 'intercap',
+          client: process.env.NEXT_PUBLIC_CLIENT || 'foodday',
           Authorization: `Bearer ${API_TOKEN}`,
         },
         body: JSON.stringify(data),
