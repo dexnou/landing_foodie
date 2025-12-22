@@ -41,7 +41,7 @@ export default function NominatePage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'client': 'intercap',
+            'client': 'foodday',
             'Authorization': `Bearer ${API_TOKEN}`
           },
           body: JSON.stringify({ orderid: Number(orderId) })
@@ -66,7 +66,7 @@ export default function NominatePage() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'client': 'intercap',
+            'client': 'foodday',
             'Authorization': `Bearer ${API_TOKEN}`
           }
         });
@@ -181,7 +181,7 @@ export default function NominatePage() {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'client': 'intercap',
+            'client': 'foodday',
             'Authorization': `Bearer ${API_TOKEN}`
           },
           body: JSON.stringify({

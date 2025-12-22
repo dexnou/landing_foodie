@@ -43,7 +43,7 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          client: 'intercap',
+          client: 'foodday',
           Authorization: `Bearer ${API_TOKEN}`,
         },
         body: JSON.stringify(data),
