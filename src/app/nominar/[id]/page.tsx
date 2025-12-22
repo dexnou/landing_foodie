@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { User, Mail, Phone, Ticket, ArrowRight, Loader2, Check, Download, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, Ticket, ArrowRight, Loader2, Check, AlertCircle } from 'lucide-react';
 
 interface AttendeeData {
   id: number | string; 
@@ -41,11 +41,7 @@ export default function NominatePage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-<<<<<<< HEAD
-            'client': 'foodday',
-=======
-            'client': process.env.CLIENT || 'intercap',
->>>>>>> refs/remotes/origin/main
+            'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',
             'Authorization': `Bearer ${API_TOKEN}`
           },
           body: JSON.stringify({ orderid: Number(orderId) })
@@ -77,11 +73,7 @@ export default function NominatePage() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-<<<<<<< HEAD
-            'client': 'foodday',
-=======
-            'client': process.env.CLIENT || 'intercap',
->>>>>>> refs/remotes/origin/main
+            'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',
             'Authorization': `Bearer ${API_TOKEN}`
           }
         });
@@ -193,30 +185,12 @@ export default function NominatePage() {
 
         const fullName = `${attendee.firstName} ${attendee.lastName}`.trim();
 
-<<<<<<< HEAD
-        console.log(`📤 Enviando PUT a: ${url}`, { nombre: fullName, ...attendee });
-
-        return fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'client': 'foodday',
-            'Authorization': `Bearer ${API_TOKEN}`
-          },
-          body: JSON.stringify({
-            nombre: fullName,
-            mail: attendee.email,
-            telefono: attendee.phone
-          })
-        });
-=======
         return {
           prodinfoid: attendee.id,
           nombre: fullName,
           mail: attendee.email,
           telefono: attendee.phone
         };
->>>>>>> refs/remotes/origin/main
       });
 
       console.log("📤 Enviando Entradas (Bulk):", entradasPayload);
@@ -225,7 +199,7 @@ export default function NominatePage() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'client': process.env.CLIENT || 'intercap',
+          'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',
           'Authorization': `Bearer ${API_TOKEN}`
         },
         body: JSON.stringify({
@@ -280,9 +254,6 @@ export default function NominatePage() {
         </p>
         
         <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
-            <button className="bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all">
-                <Download className="w-5 h-5" /> Descargar Todo (PDF)
-            </button>
             <Link href="/" className="text-brand-lime font-bold hover:underline py-2">Volver al inicio</Link>
         </div>
       </div>
