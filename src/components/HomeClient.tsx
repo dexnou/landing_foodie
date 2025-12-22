@@ -17,12 +17,52 @@ export default function Home() {
   
   // Estado para manejar el envío del formulario
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  
+  // Estado para el newsletter
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const VIDEO_ID = "Kjtk3NeKy-A";
 
   // Configuración API (misma convención que BookingModal)
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
+
+  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setNewsletterStatus('loading');
+
+    try {
+      const response = await fetch(`${API_URL}/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday'
+        },
+        body: JSON.stringify({ email: newsletterEmail })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al suscribirse');
+      }
+
+      setNewsletterStatus('success');
+      setNewsletterEmail('');
+      
+      // Resetear el estado después de 3 segundos
+      setTimeout(() => {
+        setNewsletterStatus('idle');
+      }, 3000);
+    } catch (error) {
+      console.error("Error suscribiendo al newsletter:", error);
+      setNewsletterStatus('error');
+      
+      // Resetear el estado de error después de 3 segundos
+      setTimeout(() => {
+        setNewsletterStatus('idle');
+      }, 3000);
+    }
+  };
 
   const handleSponsorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -520,12 +560,40 @@ export default function Home() {
             {/* Newsletter Simple */}
             <div className="bg-white/5 p-4 rounded-xl border border-white/10">
               <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-2">Suscribite a novedades</h4>
-              <div className="flex gap-2">
-                <input type="email" placeholder="Tu email" className="bg-black/50 border border-gray-700 rounded-lg px-3 py-2 text-white text-xs w-full focus:ring-1 focus:ring-brand-lime outline-none" />
-                <button className="bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-bold px-3 py-2 rounded-lg text-xs transition-colors">
-                  OK
-                </button>
-              </div>
+              {newsletterStatus === 'success' ? (
+                <div className="flex items-center gap-2 text-green-400 text-xs">
+                  <Check className="w-4 h-4" />
+                  <span>¡Te suscribiste correctamente!</span>
+                </div>
+              ) : newsletterStatus === 'error' ? (
+                <div className="flex items-center gap-2 text-red-400 text-xs">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Error al suscribirse. Intentá nuevamente.</span>
+                </div>
+              ) : (
+                <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
+                  <input 
+                    type="email" 
+                    placeholder="Tu email" 
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    required
+                    disabled={newsletterStatus === 'loading'}
+                    className="bg-black/50 border border-gray-700 rounded-lg px-3 py-2 text-white text-xs w-full focus:ring-1 focus:ring-brand-lime outline-none disabled:opacity-50" 
+                  />
+                  <button 
+                    type="submit"
+                    disabled={newsletterStatus === 'loading'}
+                    className="bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-bold px-3 py-2 rounded-lg text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[50px]"
+                  >
+                    {newsletterStatus === 'loading' ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      'OK'
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
 
