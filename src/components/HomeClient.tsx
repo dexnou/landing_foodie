@@ -24,7 +24,7 @@ export default function Home() {
 
   const VIDEO_ID = "Kjtk3NeKy-A";
 
-  // Configuración API (misma convención que BookingModal)
+  // Configuración API
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
   const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
@@ -115,7 +115,6 @@ export default function Home() {
           
           <div className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 bg-white/5 rounded-full backdrop-blur-md mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Calendar className="w-4 h-4 text-brand-lime" />
-            {/* --- FECHA ACTUALIZADA AQUÍ --- */}
             <span className="text-xs font-bold tracking-wider text-gray-300 uppercase">11 DE MARZO, 2026</span>
             <span className="w-1 h-1 rounded-full bg-gray-600" />
             <MapPin className="w-4 h-4 text-brand-lime" />
@@ -129,9 +128,16 @@ export default function Home() {
             </span>
           </h1>
           
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-[1.2]">
-            El evento más importante del ecosistema de delivery en Argentina. Conectando restaurantes, plataformas tecnológicas y el futuro de la gastronomía digital.
-          </p>
+          {/* --- STORY BLOCK (SEO & GEO SOURCE OF TRUTH) --- */}
+          {/* Este bloque reemplaza el párrafo corto anterior para cumplir con el requisito de 120-200 palabras visibles */}
+          <div className="max-w-4xl mx-auto mb-10 animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-100">
+            <p className="text-gray-400 text-lg md:text-xl leading-relaxed">
+              <strong>Food Delivery Day 2026</strong> es el evento estratégico más importante de Latinoamérica dedicado a revolucionar el ecosistema del delivery y la gastronomía digital. 
+              Programado para el <strong>11 de marzo de 2026 en Jano's Costanera, Buenos Aires</strong>, este encuentro se consolida como el punto de reunión definitivo para dueños de restaurantes, gerentes de logística y líderes de plataformas tecnológicas. 
+              Una plataforma única para el networking de alto nivel, enfocada en tendencias críticas como la optimización de la última milla, el auge de las dark kitchens y las estrategias de rentabilidad en apps.
+            </p>
+          </div>
+          {/* ----------------------------------------------- */}
 
           {/* CTA Principal */}
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto px-4 md:px-0 mb-20 md:mb-28">
@@ -332,14 +338,13 @@ export default function Home() {
             </div>
           </div>
 
-          {/* SPONSORS BRONCE (MODIFICADO A FLEX) */}
+          {/* SPONSORS BRONCE */}
           <div className="mb-16 border-t border-white/5 pt-12">
              <div className="flex items-center justify-center gap-2 mb-8 drop-shadow-[0_0_12px_rgba(194,65,12,0.6)]">
                 <Award className="w-5 h-5 text-orange-700" />
                 <h3 className="text-orange-700 font-bold text-lg tracking-widest uppercase">Sponsors Bronce</h3>
                 <Award className="w-5 h-5 text-orange-700" />
               </div>
-              {/* CAMBIO: Se cambió 'grid grid-cols-2' por 'flex flex-wrap' para que los items fluyan */}
               <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto opacity-90">
                 {[
                   { name: "McCain", src: "/sponsors/mccainn.png" },
