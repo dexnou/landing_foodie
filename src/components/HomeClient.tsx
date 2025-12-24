@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import BookingModal from '@/components/BookingModal';
@@ -10,6 +10,50 @@ import {
   Award, Rocket, Mail, User, Briefcase, Phone, Building2, 
   Loader2, Check, AlertCircle 
 } from 'lucide-react';
+
+// Interfaz para las FAQs
+interface FAQ {
+  id: number;
+  titulo: string;
+  texto: string;
+}
+
+// Interfaz para Sponsor (si usamos API en futuro, por ahora hardcodeado en render)
+interface Sponsor {
+  id: number;
+  nombre: string;
+  archivo: string; 
+  nota?: string;
+}
+
+// --- DATOS HARDCODEADOS (FALLBACK) ---
+const DEFAULT_FAQS: FAQ[] = [
+  {
+    id: 1,
+    titulo: "¿Qué incluye la entrada?",
+    texto: "La entrada incluye acceso completo al evento, participación en todas las charlas y paneles, networking con profesionales del sector y acceso a los stands de los sponsors. La opción con almuerzo incluye además el almuerzo gourmet durante el evento."
+  },
+  {
+    id: 2,
+    titulo: "¿Dónde se realiza el evento?",
+    texto: "El evento se realizará en Jano's Costanera (Av. Costanera Rafael Obligado 6340, CABA). Un espacio exclusivo frente al río con estacionamiento privado y fácil acceso."
+  },
+  {
+    id: 3,
+    titulo: "¿Hay estacionamiento disponible?",
+    texto: "Sí, el venue cuenta con estacionamiento privado para los asistentes. También hay opciones de transporte público cercanas que compartiremos en el email de confirmación."
+  },
+  {
+    id: 4,
+    titulo: "¿Puedo cambiar o cancelar mi entrada?",
+    texto: "Podés solicitar cambios o cancelaciones hasta 7 días antes del evento. Para más información, contactanos por email a info@fooddeliveryday.com.ar"
+  },
+  {
+    id: 5,
+    titulo: "¿Quiénes participan como speakers?",
+    texto: "Contamos con la participación de Country Managers de Rappi, Mercado Pago y Atomic Kitchens, además de un panel con gastronómicos exitosos en delivery y un cierre especial con el comediante Gerardo Freideles."
+  }
+];
 
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -22,23 +66,72 @@ export default function Home() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
+  // Estados Dinámicos para FAQs
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [loadingFaqs, setLoadingFaqs] = useState(true);
+  
+  // Estado para Sponsors (aunque por ahora usamos hardcodeado en el JSX, dejamos la estructura lista)
+  const [sponsorsList, setSponsorsList] = useState<Sponsor[]>([]);
+
   const VIDEO_ID = "Kjtk3NeKy-A";
 
-  // Configuración API
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
-  const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
+  // --- CARGA DE DATOS AL INICIAR ---
+  useEffect(() => {
+    const fetchData = async () => {
+      // 1. Cargar FAQs con Fallback
+      try {
+        const resFaqs = await fetch('/api/faqs');
+        if (resFaqs.ok) {
+          const jsonFaqs = await resFaqs.json();
+
+          console.log("🔥 RESPUESTA FAQs:", jsonFaqs); // <--- AGREGAR ESTO
+          // Si trae datos, los usamos.
+          if (jsonFaqs.success && Array.isArray(jsonFaqs.data) && jsonFaqs.data.length > 0) {
+            setFaqs(jsonFaqs.data);
+          } else {
+            // Si viene vacío o success false, fallback
+            console.log("API de FAQs vacía, usando fallback.");
+            setFaqs(DEFAULT_FAQS);
+          }
+        } else {
+          // Si la API falla (404, 500), fallback
+          console.warn("Fallo al cargar FAQs, usando fallback.");
+          setFaqs(DEFAULT_FAQS);
+        }
+      } catch (error) {
+        console.error("Error conectando con FAQs, usando fallback:", error);
+        setFaqs(DEFAULT_FAQS);
+      } finally {
+        setLoadingFaqs(false);
+      }
+
+      // 2. Cargar Sponsors (Opcional por ahora, solo preparamos el terreno)
+      try {
+        const resSponsors = await fetch('/api/sponsors/list');
+        if (resSponsors.ok) {
+          const jsonSponsors = await resSponsors.json();
+          if (jsonSponsors.success && Array.isArray(jsonSponsors.data)) {
+            setSponsorsList(jsonSponsors.data);
+          }
+        }
+      } catch (error) {
+        // Silencioso, no rompemos nada si falla sponsors list
+        console.error("Error cargando lista de sponsors:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setNewsletterStatus('loading');
 
     try {
-      const response = await fetch(`${API_URL}/subscribe`, {
+      // Endpoint local (Seguro)
+      const response = await fetch('/api/newsletter', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: newsletterEmail })
       });
 
@@ -49,7 +142,6 @@ export default function Home() {
       setNewsletterStatus('success');
       setNewsletterEmail('');
       
-      // Resetear el estado después de 3 segundos
       setTimeout(() => {
         setNewsletterStatus('idle');
       }, 3000);
@@ -57,7 +149,6 @@ export default function Home() {
       console.error("Error suscribiendo al newsletter:", error);
       setNewsletterStatus('error');
       
-      // Resetear el estado de error después de 3 segundos
       setTimeout(() => {
         setNewsletterStatus('idle');
       }, 3000);
@@ -79,13 +170,10 @@ export default function Home() {
     };
 
     try {
-      const res = await fetch(`${API_URL}/agregarSponsors`, {
+      // Endpoint local (Seguro)
+      const res = await fetch('/api/sponsors', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          client: process.env.NEXT_PUBLIC_CLIENT || 'foodday',
-          Authorization: `Bearer ${API_TOKEN}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
@@ -128,8 +216,7 @@ export default function Home() {
             </span>
           </h1>
           
-          {/* --- STORY BLOCK (SEO & GEO SOURCE OF TRUTH) --- */}
-          {/* Este bloque reemplaza el párrafo corto anterior para cumplir con el requisito de 120-200 palabras visibles */}
+          {/* --- STORY BLOCK (SEO SOURCE OF TRUTH) --- */}
           <div className="max-w-4xl mx-auto mb-10 animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-100">
             <p className="text-gray-400 text-lg md:text-xl leading-relaxed">
               <strong>Food Delivery Day 2026</strong> es el evento estratégico más importante de Latinoamérica dedicado a revolucionar el ecosistema del delivery y la gastronomía digital. 
@@ -137,7 +224,6 @@ export default function Home() {
               Una plataforma única para el networking de alto nivel, enfocada en tendencias críticas como la optimización de la última milla, el auge de las dark kitchens y las estrategias de rentabilidad en apps.
             </p>
           </div>
-          {/* ----------------------------------------------- */}
 
           {/* CTA Principal */}
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto px-4 md:px-0 mb-20 md:mb-28">
@@ -521,26 +607,21 @@ export default function Home() {
             <p className="text-gray-400">Todo lo que necesitás saber sobre el evento.</p>
           </div>
 
-          <div className="space-y-2">
-            <AccordionItem title="¿Qué incluye la entrada?">
-              La entrada incluye acceso completo al evento, participación en todas las charlas y paneles, networking con profesionales del sector y acceso a los stands de los sponsors. La opción con almuerzo incluye además el almuerzo gourmet durante el evento.
-            </AccordionItem>
-
-            <AccordionItem title="¿Dónde se realiza el evento?">
-              El evento se realizará en <strong>Jano's Costanera</strong> (Av. Costanera Rafael Obligado 6340, CABA). Un espacio exclusivo frente al río con estacionamiento privado y fácil acceso.
-            </AccordionItem>
-
-            <AccordionItem title="¿Hay estacionamiento disponible?">
-              Sí, el venue cuenta con estacionamiento privado para los asistentes. También hay opciones de transporte público cercanas que compartiremos en el email de confirmación.
-            </AccordionItem>
-
-            <AccordionItem title="¿Puedo cambiar o cancelar mi entrada?">
-              Podés solicitar cambios o cancelaciones hasta 7 días antes del evento. Para más información, contactanos por email a <a href="mailto:info@fooddeliveryday.com.ar" className="text-brand-lime hover:underline font-bold">info@fooddeliveryday.com.ar</a>
-            </AccordionItem>
-
-            <AccordionItem title="¿Quiénes participan como speakers?">
-              Contamos con la participación de Country Managers de Rappi, Mercado Pago y Atomic Kitchens, además de un panel con gastronómicos exitosos en delivery y un cierre especial con el comediante Gerardo Freideles.
-            </AccordionItem>
+          <div className="space-y-2 min-h-[200px]">
+            {loadingFaqs ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="w-8 h-8 text-brand-lime animate-spin" />
+              </div>
+            ) : faqs.length > 0 ? (
+              faqs.map((faq) => (
+                <AccordionItem key={faq.id} title={faq.titulo}>
+                  {/* whitespace-pre-line respeta saltos de línea de la DB */}
+                  <span className="whitespace-pre-line">{faq.texto}</span>
+                </AccordionItem>
+              ))
+            ) : (
+              <p className="text-center text-gray-500">No hay preguntas frecuentes disponibles por el momento.</p>
+            )}
           </div>
         </div>
       </section>

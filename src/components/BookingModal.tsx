@@ -8,18 +8,14 @@ interface ModalProps {
   onClose: () => void;
 }
 
-// Estados del proceso de compra
 type BookingState = 'idle' | 'creating' | 'pending_payment' | 'paid' | 'error';
 
 export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const [bookingState, setBookingState] = useState<BookingState>('idle');
   const [includeLunch, setIncludeLunch] = useState(false);
   const [optIn, setOptIn] = useState(true);
-  
-  // Estado para la cantidad de entradas
   const [quantity, setQuantity] = useState(1);
   
-  // Datos del formulario
   const [formData, setFormData] = useState({
     company: '',
     firstName: '', 
@@ -31,26 +27,19 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const [orderId, setOrderId] = useState<number | null>(null);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
 
-  // CONFIGURACIÓN DE PRECIOS
   const BASE_PRICE = 12000;
   const LUNCH_PRICE = 8000;
-  
-  // Cálculo del precio unitario y total
   const unitPrice = includeLunch ? BASE_PRICE + LUNCH_PRICE : BASE_PRICE;
   const totalPrice = unitPrice * quantity;
   
-  // URL del Backend
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
-  const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
+  // NOTA: Eliminamos API_URL y TOKEN públicos. Ahora todo va a /api/...
 
-  // Referencia para datos de tracking
   const trackingDataRef = useRef({ quantity, unitPrice, totalPrice, includeLunch });
 
   useEffect(() => {
     trackingDataRef.current = { quantity, unitPrice, totalPrice, includeLunch };
   }, [quantity, unitPrice, totalPrice, includeLunch]);
 
-  // Resetea el formulario al cerrar el modal
   useEffect(() => {
     if (!isOpen) {
       const timer = setTimeout(() => {
@@ -65,7 +54,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
     }
   }, [isOpen]);
 
-  // Funciones para manejar la cantidad
   const increaseQuantity = () => setQuantity(prev => prev + 1);
   const decreaseQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
 
@@ -78,22 +66,15 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
       
       interval = setInterval(async () => {
         try {
-          // Consultamos al backend real
-          const res = await fetch(`${API_URL}/checkIfPaid`, {
+          // CAMBIO: Endpoint local seguro
+          const res = await fetch('/api/orders/check', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',             
-              'Authorization': `Bearer ${API_TOKEN}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orderid: orderId })
           });
           
           if (res.ok) {
             const data = await res.json();
-            
-            // Verificamos la respuesta real del backend
-            // Se asume que data.response es true cuando el pago impactó
             const isPaid = data.response === true;
 
             if (isPaid) {
@@ -120,13 +101,12 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           }
         } catch (error) {
           console.error("Error verificando pago:", error);
-          // No cambiamos a error aquí para no interrumpir el polling por un fallo de red momentáneo
         }
       }, 3000); 
     }
 
     return () => clearInterval(interval);
-  }, [bookingState, orderId, API_URL, API_TOKEN]);
+  }, [bookingState, orderId]);
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,13 +118,10 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
     setBookingState('creating');
     
     try {
-      const response = await fetch(`${API_URL}/crearOrden`, {
+      // CAMBIO: Endpoint local seguro
+      const response = await fetch('/api/orders/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',
-          'Authorization': `Bearer ${API_TOKEN}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nombre: formData.firstName, 
           apellido: formData.lastName,
@@ -190,7 +167,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
       
       <div className="bg-white rounded-t-2xl md:rounded-2xl w-full max-w-md overflow-hidden relative z-10 animate-zoom-in shadow-2xl flex flex-col max-h-[90vh]">
         
-        {/* Header Modal */}
         <div className="bg-gray-50 p-4 flex justify-between items-center border-b border-gray-100 flex-shrink-0">
           <div>
             <h3 className="font-bold text-gray-900 text-lg">
@@ -205,14 +181,9 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           </button>
         </div>
 
-        {/* Contenido */}
         <div className="p-5 overflow-y-auto">
-          
-          {/* 1. FORMULARIO DE DATOS */}
           {bookingState === 'idle' && (
             <form className="space-y-5" onSubmit={handleSubmit}>
-              
-              {/* SELECCIÓN DE CANTIDAD */}
               <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200">
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-gray-900">Cantidad de entradas</span>
@@ -243,7 +214,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 <input required name="company" value={formData.company} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none transition-all min-h-[44px]" placeholder="Ej: Rappi" />
               </div>
               
-              {/* Inputs Separados */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Nombre</label>
@@ -306,7 +276,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </form>
           )}
 
-          {/* 2. CREANDO ORDEN */}
           {bookingState === 'creating' && (
             <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-in fade-in">
               <Loader2 className="w-10 h-10 text-brand-lime animate-spin" />
@@ -314,7 +283,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </div>
           )}
 
-          {/* 3. ESPERANDO PAGO */}
           {bookingState === 'pending_payment' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-6 text-center animate-in fade-in">
               <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center animate-pulse">
@@ -347,7 +315,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </div>
           )}
 
-          {/* 4. ÉXITO (BOTÓN NUEVO AQUÍ) */}
           {bookingState === 'paid' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-6 text-center animate-in fade-in zoom-in duration-300">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
@@ -360,9 +327,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 </p>
               </div>
               
-              {/* --- BOTÓN DE FLUJO --- */}
               <Link 
-                href={`/success/${orderId}?qty=${quantity}`} // Pasamos la cantidad
+                href={`/success/${orderId}?qty=${quantity}`}
                 className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-brand-lime/20 flex items-center justify-center gap-2"
                 onClick={onClose}
               >
@@ -379,7 +345,6 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             </div>
           )}
 
-          {/* 5. ESTADO: ERROR */}
           {bookingState === 'error' && (
             <div className="flex flex-col items-center justify-center py-8 space-y-4 text-center animate-in fade-in">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">

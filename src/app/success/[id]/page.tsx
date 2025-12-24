@@ -9,37 +9,28 @@ export default function SuccessPage() {
   const searchParams = useSearchParams(); 
   const orderId = Array.isArray(params.id) ? params.id[0] : params.id;
   
-  // Obtenemos la cantidad de la URL, si no existe asumimos 1
   const qtyParam = searchParams.get('qty');
   const quantity = qtyParam ? parseInt(qtyParam) : 1;
 
   const [status, setStatus] = useState<'loading' | 'paid' | 'failed'>('loading');
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
-  const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
 
   useEffect(() => {
     const verifyPayment = async () => {
       if (!orderId) return;
 
       try {
-        const res = await fetch(`${API_URL}/checkIfPaid`, {
+        // CAMBIO: Endpoint local
+        const res = await fetch('/api/orders/check', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',
-            'Authorization': `Bearer ${API_TOKEN}`
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderid: Number(orderId) })
         });
 
         if (res.ok) {
             const data = await res.json();
             
-            // Verificación real del estado del pago
             if (data.response === true) {
                 setStatus('paid');
-                
                 if (typeof window !== 'undefined') {
                     (window as any).dataLayer = (window as any).dataLayer || [];
                     (window as any).dataLayer.push({ 
@@ -49,11 +40,9 @@ export default function SuccessPage() {
                     });
                 }
             } else {
-                // El backend dice que NO está pagado
                 setStatus('failed');
             }
         } else {
-            // Error HTTP (500, 404, etc.)
             setStatus('failed');
         }
 
@@ -65,7 +54,7 @@ export default function SuccessPage() {
 
     verifyPayment();
 
-  }, [orderId, API_URL, API_TOKEN]);
+  }, [orderId]);
 
   return (
     <main className="bg-brand-dark min-h-screen flex items-center justify-center p-6 text-white font-sans selection:bg-brand-lime selection:text-brand-dark">
@@ -73,7 +62,6 @@ export default function SuccessPage() {
       <div className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl text-center relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-20 bg-brand-lime/10 blur-3xl -z-10" />
 
-        {/* CARGANDO */}
         {status === 'loading' && (
           <div className="py-10 flex flex-col items-center animate-in fade-in">
             <Loader2 className="w-16 h-16 text-brand-lime animate-spin mb-6" />
@@ -82,7 +70,6 @@ export default function SuccessPage() {
           </div>
         )}
 
-        {/* PAGO EXITOSO */}
         {status === 'paid' && (
           <div className="py-6 flex flex-col items-center animate-in zoom-in duration-300">
             <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
@@ -101,7 +88,6 @@ export default function SuccessPage() {
               </p>
             </div>
 
-            {/* BOTÓN AL FORMULARIO DE NOMINACIÓN */}
             <Link 
               href={`/nominar/${orderId}?qty=${quantity}`} 
               className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 group mb-4 shadow-[0_0_20px_-5px_rgba(190,242,100,0.4)]"
@@ -119,7 +105,6 @@ export default function SuccessPage() {
           </div>
         )}
 
-        {/* ERROR (PAGO NO CONFIRMADO O FALLIDO) */}
         {status === 'failed' && (
           <div className="py-6 flex flex-col items-center animate-in shake">
             <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mb-6">

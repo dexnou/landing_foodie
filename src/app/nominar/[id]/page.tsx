@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { User, Mail, Phone, Ticket, ArrowRight, Loader2, Check, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, Ticket, ArrowRight, Loader2, Check, Download, AlertCircle } from 'lucide-react';
 
 interface AttendeeData {
   id: number | string; 
@@ -25,10 +25,9 @@ export default function NominatePage() {
   
   const [attendees, setAttendees] = useState<AttendeeData[]>([]);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://productos.cliiver.com/publicapi/foodday";
-  const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN || "cliiver";
+  // CAMBIO: Apuntamos al BFF local
+  const INTERNAL_API = "/api"; 
 
-  // --- 1. FETCH INICIAL (Check Payment + Get Tickets) ---
   useEffect(() => {
     const initPage = async () => {
       try {
@@ -36,14 +35,10 @@ export default function NominatePage() {
 
         console.log(`🔒 Verificando estado del pago para orden: ${orderId}`);
 
-        // PASO 1: Verificar pago y si ya fue editado
-        const payRes = await fetch(`${API_URL}/checkIfPaid`, {
+        // PASO 1: Verificar pago (Local)
+        const payRes = await fetch(`${INTERNAL_API}/orders/check`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',
-            'Authorization': `Bearer ${API_TOKEN}`
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderid: Number(orderId) })
         });
 
@@ -52,30 +47,24 @@ export default function NominatePage() {
         const payData = await payRes.json();
         console.log("💳 Estado del pago:", payData);
         
-        // 1.1 Si NO está pagada
         if (payData.response !== true) {
           alert("Esta orden no se encuentra abonada o confirmada.");
           router.push('/'); 
           return;
         }
 
-        // 1.2 Si YA fue editada (entriesEdited === true)
         if (payData.entriesEdited === true) {
           alert("Las entradas de esta orden ya han sido asignadas previamente. No se pueden volver a editar.");
-          router.push('/'); // <--- CAMBIO: Redirige al Home
+          router.push('/');
           return;
         }
 
-        // PASO 2: Si está pagada y NO editada, traemos los productos para llenar
+        // PASO 2: Traer entradas (Local)
         console.log(`📡 Pago confirmado y habilitado para editar. Buscando entradas...`);
         
-        const response = await fetch(`${API_URL}/traerProdsOrden/${orderId}`, {
+        const response = await fetch(`${INTERNAL_API}/tickets/get?orderId=${orderId}`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',
-            'Authorization': `Bearer ${API_TOKEN}`
-          }
+          headers: { 'Content-Type': 'application/json' }
         });
 
         if (response.ok) {
@@ -89,12 +78,8 @@ export default function NominatePage() {
 
           if (resJson.success && Array.isArray(resJson.data)) {
              const ticketsFromBackend = resJson.data.map((t: any) => {
-              
               const ticketId = t.orderprodid || t.prodinfoid;
-
-              if (!ticketId) {
-                console.error("⚠️ ALERTA: No se encontró ID válido en:", t);
-              }
+              if (!ticketId) console.error("⚠️ ALERTA: No se encontró ID válido en:", t);
 
               const rawName = safeValue(t.prodinfo_nombre || t.nombre);
               const rawMail = safeValue(t.prodinfo_mail || t.mail);
@@ -112,13 +97,11 @@ export default function NominatePage() {
                 phone: rawPhone
               };
             });
-            
             setAttendees(ticketsFromBackend);
           } else {
             console.warn("Estructura de datos inesperada o array vacío");
             fallbackToQueryParams();
           }
-
         } else {
           console.error("Error al traer entradas");
           fallbackToQueryParams();
@@ -144,7 +127,7 @@ export default function NominatePage() {
     if (orderId) {
       initPage();
     }
-  }, [orderId, searchParams, API_URL, API_TOKEN, router]);
+  }, [orderId, searchParams, router]);
 
   const handleInputChange = (index: number, field: keyof AttendeeData, value: string) => {
     const newAttendees = [...attendees];
@@ -152,12 +135,10 @@ export default function NominatePage() {
     setAttendees(newAttendees);
   };
 
-  // --- 2. UPDATE DE INFO (BULK PUT) ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Validación estricta
     const isValid = attendees.every(a => 
       a.firstName.trim() !== '' && 
       a.lastName.trim() !== '' && 
@@ -177,14 +158,11 @@ export default function NominatePage() {
     }
 
     try {
-      // Payload
       const entradasPayload = attendees.map(attendee => {
         if (!attendee.id || String(attendee.id).startsWith('temp-')) {
            throw new Error(`ID de entrada inválido para: ${attendee.firstName}`);
         }
-
         const fullName = `${attendee.firstName} ${attendee.lastName}`.trim();
-
         return {
           prodinfoid: attendee.id,
           nombre: fullName,
@@ -193,15 +171,12 @@ export default function NominatePage() {
         };
       });
 
-      console.log("📤 Enviando Entradas (Bulk):", entradasPayload);
+      console.log("📤 Enviando Entradas (Bulk Local):", entradasPayload);
 
-      const response = await fetch(`${API_URL}/actualizarProdInfo`, {
+      // CAMBIO: Endpoint Bulk Local
+      const response = await fetch(`${INTERNAL_API}/tickets/update`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'client': process.env.NEXT_PUBLIC_CLIENT || 'foodday',
-          'Authorization': `Bearer ${API_TOKEN}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           entradas: entradasPayload
         })
@@ -212,12 +187,11 @@ export default function NominatePage() {
       if (response.ok && data.success) {
         console.log("✅ Entradas actualizadas exitosamente:", data);
         setIsCompleted(true);
-      } 
-      else {
+      } else {
         console.error("❌ Error del backend:", data);
         if (data.alreadyEdited) {
           alert(data.message || "Error: Las entradas ya fueron editadas anteriormente.");
-          router.push('/'); // <--- CAMBIO: Redirige al Home
+          router.push('/');
         } else {
           throw new Error(data.message || "Error desconocido al actualizar entradas");
         }
@@ -282,11 +256,6 @@ export default function NominatePage() {
             Tenés <strong>{attendees.length} {attendees.length === 1 ? 'cupo' : 'cupos'}</strong> disponibles. <br className="hidden md:block"/>
             Completá los datos para generar los QRs de acceso.
           </p>
-          
-          <div className="mt-4 flex items-center justify-center gap-2 text-yellow-500 bg-yellow-500/10 p-3 rounded-lg border border-yellow-500/20 max-w-lg mx-auto text-sm">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span className="text-left md:text-center">Atención: Una vez confirmados los datos, no podrán volver a editarse.</span>
-          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
