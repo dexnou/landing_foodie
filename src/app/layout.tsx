@@ -94,8 +94,11 @@ export const metadata: Metadata = {
 
 /*    ROOT LAYOUT  */
 export default function RootLayout({ children }: { children: ReactNode }) {
-  /*    JSON-LD — EVENT (Schema.org)  */
+  const GTM_ID = "GTM-KDCKP9GL"
+  const GA4_ID = "G-Y9T5PFK2E4"
+  const META_PIXEL_ID = "1963356967929076"
 
+  /*    JSON-LD — EVENT (Schema.org)  */
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -130,10 +133,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             TRACKING / TAGS (pedido del cliente)
             - GTM: script en <head> (beforeInteractive)
             - GTM noscript: justo después de abrir <body>
-            - Meta Pixel + GA4: global en todo el sitio
+            - Meta Pixel: script en <head> (beforeInteractive) + noscript al inicio del body
+            - GA4: global en todo el sitio
            ========================================================= */}
 
-        {/* 1) Google Tag Manager — va en <head> (Next lo inyecta al head con beforeInteractive) */}
+        {/* 1) Google Tag Manager — <head> */}
         <Script
           id="gtm-head"
           strategy="beforeInteractive"
@@ -142,11 +146,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-KDCKP9GL');`,
+})(window,document,'script','dataLayer','${GTM_ID}');`,
           }}
         />
 
-        {/* (Opcional recomendado) JSON-LD (también lo dejamos en head) */}
+        {/* 2) JSON-LD — <head> */}
         <Script
           id="jsonld-event"
           type="application/ld+json"
@@ -154,11 +158,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
 
-        {/* 2) Justo después de <body> — NOSCRIPTs */}
+        {/* 3) Meta Pixel Code — <head> */}
+        <Script
+          id="meta-pixel"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${META_PIXEL_ID}');
+fbq('track', 'PageView');`,
+          }}
+        />
+
+        {/* 4) Justo después de <body> — NOSCRIPTs */}
+
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-KDCKP9GL"
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
             height="0"
             width="0"
             style={{ display: "none", visibility: "hidden" }}
@@ -171,32 +194,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             height="1"
             width="1"
             style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=616102904568579&ev=PageView&noscript=1"
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
             alt=""
           />
         </noscript>
 
-        {/* 3) Meta Pixel Code */}
+        {/* 5) Google tag (gtag.js) — GA4 */}
         <Script
-          id="meta-pixel"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '616102904568579');
-fbq('track', 'PageView');`,
-          }}
-        />
-
-        {/* 4) Google tag (gtag.js) — GA4 */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-Y9T5PFK2E4"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
           strategy="afterInteractive"
         />
         <Script
@@ -206,7 +211,7 @@ fbq('track', 'PageView');`,
             __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-Y9T5PFK2E4');`,
+gtag('config', '${GA4_ID}');`,
           }}
         />
 
