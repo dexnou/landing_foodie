@@ -351,7 +351,7 @@ export default function Home() {
             <AccordionItem time="11:30 - 12:00" title="Dark Kitchens: Cocina sin Fronteras">
               Con el <strong>Regional Country Manager de Atomic Kitchens</strong>. Descubre el futuro de los modelos operativos eficientes.
             </AccordionItem>
-            <AccordionItem time="14:00 - 14:30" title="El Futuro se Entrega">
+            <AccordionItem time="14:00 - 14:30" title="¿Por qué el delivery es la mejor publicidad del mundo?">
               <strong>Country Manager Rappi Argentina</strong>. Cómo Rappi redefine la última milla y qué esperar para el 2026.
             </AccordionItem>
             <AccordionItem time="15:30 - 16:00" title="Ecosistema en Expansión: Mercado Pago">
@@ -434,7 +434,6 @@ export default function Home() {
               <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto opacity-90">
                 {[
                   { name: "McCain", src: "/sponsors/mccainn.png" },
-                  { name: "Cabify", src: "/sponsors/cabify.png" },
                   { name: "Guapaletas", src: "/sponsors/guapaletas.png" },
                 ].map((sponsor) => (
                   <div key={sponsor.name} className="h-28 w-60 bg-white/5 border border-orange-800/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-4 relative group">
