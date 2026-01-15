@@ -155,18 +155,22 @@ export default function Home() {
     }
   };
 
-  const handleSponsorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+const handleSponsorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormStatus('loading');
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    
+    // Capturamos los datos del formulario
     const data = {
       nombre: String(formData.get('nombre') ?? ''),
       puesto: String(formData.get('puesto') ?? ''),
       empresa: String(formData.get('empresa') ?? ''),
       telefono: String(formData.get('telefono') ?? ''),
       email: String(formData.get('email') ?? ''),
+      // IMPORTANTE: Mapeamos el campo 'mensaje' del front a 'nota' que es lo que espera el backend
+      nota: String(formData.get('mensaje') ?? ''), 
     };
 
     try {
@@ -189,7 +193,7 @@ export default function Home() {
       setFormStatus('error');
     }
   };
-
+  
   return (
     <main className="bg-brand-dark min-h-screen text-white overflow-x-hidden font-sans selection:bg-brand-lime selection:text-brand-dark">
       <Header onReserve={() => setModalOpen(true)} />

@@ -10,13 +10,15 @@ export async function GET(request: Request) {
     const API_URL = process.env.API_URL;
     const API_TOKEN = process.env.API_TOKEN;
     const CLIENT = process.env.CLIENT_HEADER || 'foodday';
+    const SECRET_KEY = process.env.FOODDAY_SECRET_KEY; // <--- LLAVE
 
     const res = await fetch(`${API_URL}/traerProdsOrden/${orderId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'client': CLIENT,
-        'Authorization': `Bearer ${API_TOKEN}`
+        'Authorization': `Bearer ${API_TOKEN}`,
+        'x-foodday-secret': SECRET_KEY || '' // <--- SOLO AGREGAMOS ESTO
       }
     });
 
