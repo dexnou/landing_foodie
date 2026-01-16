@@ -1,5 +1,5 @@
 'use client';
-import { X, Check, Shield, Loader2, ExternalLink, Minus, Plus, ArrowRight } from 'lucide-react';
+import { X, Check, Shield, Loader2, ExternalLink, Minus, Plus, ArrowRight, Clock, Tag } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
@@ -10,12 +10,24 @@ interface ModalProps {
 
 type BookingState = 'idle' | 'creating' | 'pending_payment' | 'paid' | 'error';
 
+// --- CONFIGURACIÓN DE PRECIOS Y FECHAS ---
+const PRICE_CONFIG = {
+  increaseDate: '2026-03-01T00:00:00', // Fecha del próximo aumento
+  nextPricePercentage: 30, // Porcentaje de aumento estimado
+  batchName: 'Lote 1: Early Bird',
+  basePrice: 12000,
+  lunchPrice: 8000
+};
+
 export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const [bookingState, setBookingState] = useState<BookingState>('idle');
   const [includeLunch, setIncludeLunch] = useState(false);
   const [optIn, setOptIn] = useState(true);
   const [quantity, setQuantity] = useState(1);
   
+  // Estado para la cuenta regresiva
+  const [timeLeft, setTimeLeft] = useState<{days: number, hours: number, minutes: number, seconds: number} | null>(null);
+
   const [formData, setFormData] = useState({
     company: '',
     firstName: '', 
@@ -27,14 +39,39 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const [orderId, setOrderId] = useState<number | null>(null);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
 
-  const BASE_PRICE = 12000;
-  const LUNCH_PRICE = 8000;
-  const unitPrice = includeLunch ? BASE_PRICE + LUNCH_PRICE : BASE_PRICE;
+  // Usamos los precios de la configuración
+  const unitPrice = includeLunch ? PRICE_CONFIG.basePrice + PRICE_CONFIG.lunchPrice : PRICE_CONFIG.basePrice;
   const totalPrice = unitPrice * quantity;
   
-  // NOTA: Eliminamos API_URL y TOKEN públicos. Ahora todo va a /api/...
-
   const trackingDataRef = useRef({ quantity, unitPrice, totalPrice, includeLunch });
+
+  // --- LÓGICA DE CUENTA REGRESIVA ---
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const target = new Date(PRICE_CONFIG.increaseDate);
+      const now = new Date();
+      const difference = +target - +now;
+      
+      if (difference > 0) {
+        return {
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        };
+      }
+      return null; // Ya pasó la fecha
+    };
+
+    // Inicializar
+    setTimeLeft(calculateTimeLeft());
+
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     trackingDataRef.current = { quantity, unitPrice, totalPrice, includeLunch };
@@ -66,7 +103,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
       
       interval = setInterval(async () => {
         try {
-          // CAMBIO: Endpoint local seguro
+          // Endpoint local seguro
           const res = await fetch('/api/orders/check', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -81,6 +118,13 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               setBookingState('paid');
               clearInterval(interval);
               
+              // Disparar email de confirmación (Fire & Forget)
+              fetch('/api/orders/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderid: orderId })
+              }).catch(err => console.error("Error disparando email confirmación:", err));
+
               const { quantity, unitPrice, totalPrice, includeLunch } = trackingDataRef.current;
 
               if (typeof window !== 'undefined') {
@@ -118,7 +162,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
     setBookingState('creating');
     
     try {
-      // CAMBIO: Endpoint local seguro
+      // Endpoint local seguro
       const response = await fetch('/api/orders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -184,12 +228,48 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
         <div className="p-5 overflow-y-auto">
           {bookingState === 'idle' && (
             <form className="space-y-5" onSubmit={handleSubmit}>
-              <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold text-gray-900">Cantidad de entradas</span>
-                  <p className="text-xs text-gray-500">${unitPrice.toLocaleString('es-AR')} c/u</p>
+              
+              {/* --- BANNER DE CUENTA REGRESIVA --- */}
+              {timeLeft && (
+                <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+                  <Clock className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5 animate-pulse" />
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center mb-1">
+                      <p className="text-orange-800 font-bold text-xs uppercase tracking-wide">
+                        ¡Subida de Precio Inminente!
+                      </p>
+                      <span className="bg-orange-200 text-orange-800 text-[10px] px-1.5 py-0.5 rounded font-bold">
+                        +{PRICE_CONFIG.nextPricePercentage}%
+                      </span>
+                    </div>
+                    <p className="text-orange-700 text-xs leading-relaxed">
+                      El lote actual finaliza en: 
+                      <span className="font-mono font-bold text-sm bg-white/60 px-1.5 py-0.5 rounded ml-1 text-orange-900 border border-orange-200 inline-block mt-1">
+                        {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-lg border border-gray-200 shadow-sm">
+              )}
+
+              {/* BLOQUE DE PRECIOS MEJORADO */}
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-bold text-gray-900">Cantidad de entradas</span>
+                      {/* Badge del lote */}
+                      <span className="bg-brand-lime text-brand-dark text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Tag className="w-3 h-3" /> {PRICE_CONFIG.batchName}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Precio actual: <span className="font-semibold text-gray-900">${unitPrice.toLocaleString('es-AR')}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-gray-200 shadow-sm">
                   <button 
                     type="button" 
                     onClick={decreaseQuantity}
@@ -198,7 +278,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="font-bold text-gray-900 w-6 text-center select-none text-lg">{quantity}</span>
+                  <span className="font-bold text-gray-900 w-8 text-center select-none text-xl">{quantity}</span>
                   <button 
                     type="button" 
                     onClick={increaseQuantity}

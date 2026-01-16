@@ -65,11 +65,6 @@ export default function Header({ onReserve }: HeaderProps) {
           >
             Reservar
           </button>
-
-          {/* Botón Menú Mobile (solo visible en celular) */}
-          <button className="md:hidden text-white hover:text-brand-lime transition-colors font-bold text-sm uppercase tracking-widest ml-2">
-            Menú
-          </button>
         </div>
 
       </div>
