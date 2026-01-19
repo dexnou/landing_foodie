@@ -2,6 +2,7 @@
 import { X, Check, Shield, Loader2, ExternalLink, Minus, Plus, ArrowRight, Clock, Tag } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface ModalProps {
   isOpen: boolean;
@@ -224,13 +225,13 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
           </button>
         </div>
 
-        <div className="p-5 overflow-y-auto">
+        <div className="p-4 overflow-y-auto">
           {bookingState === 'idle' && (
-            <form className="space-y-5" onSubmit={handleSubmit}>
+            <form className="space-y-3" onSubmit={handleSubmit}>
 
               {/* --- BANNER DE CUENTA REGRESIVA --- */}
               {timeLeft && (
-                <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+                <div className="bg-orange-50 border border-orange-200 rounded-xl p-2 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
                   <Clock className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5 animate-pulse" />
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-1">
@@ -249,8 +250,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               )}
 
               {/* BLOQUE DE PRECIOS MEJORADO */}
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-200">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-sm font-bold text-gray-900">Cantidad de entradas</span>
@@ -287,28 +288,28 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Nombre de la Empresa</label>
-                <input required name="company" value={formData.company} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none transition-all min-h-[44px]" placeholder="Ej: Rappi" />
+                <input required name="company" value={formData.company} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none transition-all min-h-[40px]" placeholder="Ej: Rappi" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Nombre</label>
-                  <input required name="firstName" value={formData.firstName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="Juan" />
+                  <input required name="firstName" value={formData.firstName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[40px]" placeholder="Juan" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Apellido</label>
-                  <input required name="lastName" value={formData.lastName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="Pérez" />
+                  <input required name="lastName" value={formData.lastName} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[40px]" placeholder="Pérez" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Email</label>
-                  <input required name="email" value={formData.email} onChange={handleInputChange} type="email" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="nombre@empresa.com" />
+                  <input required name="email" value={formData.email} onChange={handleInputChange} type="email" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[40px]" placeholder="nombre@empresa.com" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Teléfono</label>
-                  <input required name="phone" value={formData.phone} onChange={handleInputChange} type="tel" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="+54 9 11 6633-2233" />
+                  <input required name="phone" value={formData.phone} onChange={handleInputChange} type="tel" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[40px]" placeholder="+54 9 11 6633-2233" />
                 </div>
               </div>
 
@@ -329,7 +330,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               </div>
 
               <div
-                className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-brand-lime transition-colors group"
+                className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-brand-lime transition-colors group"
                 onClick={() => setIncludeLunch(!includeLunch)}
               >
                 <div className="flex flex-col">
@@ -342,11 +343,14 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               </div>
 
               <div className="pt-2 pb-2">
-                <button type="submit" className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-4 rounded-xl shadow-lg shadow-brand-lime/20 transform active:scale-[0.98] transition-all text-lg uppercase tracking-wide min-h-[56px] flex items-center justify-center gap-2">
+                <button type="submit" className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-3 rounded-xl shadow-lg shadow-brand-lime/20 transform active:scale-[0.98] transition-all text-base uppercase tracking-wide min-h-[48px] flex items-center justify-center gap-2">
                   IR A PAGAR ${totalPrice.toLocaleString('es-AR')}
                 </button>
                 <p className="text-center text-[10px] text-gray-400 mt-3 flex items-center justify-center gap-1">
-                  <Shield className="w-3 h-3" /> Pagos procesados de forma segura.
+                  <Shield className="w-3 h-3" /> Pagos procesados de forma segura con
+                  <span className="relative w-14 h-4 inline-block">
+                    <Image src="/sponsors/mercadopagoo.png" alt="Mercado Pago" fill className="object-contain" />
+                  </span>
                 </p>
               </div>
             </form>
