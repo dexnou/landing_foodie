@@ -6,10 +6,10 @@ import BookingModal from '@/components/BookingModal';
 import SponsorModal from '@/components/SponsorModal';
 import AccordionItem from '@/components/Accordion';
 import Image from 'next/image';
-import { 
-  ArrowRight, Play, MapPin, Calendar, CheckCircle2, Star, Shield, 
-  Award, Rocket, Mail, User, Briefcase, Phone, Building2, 
-  Loader2, Check, AlertCircle, ChevronDown, Flame, ExternalLink, Instagram, Ticket, Utensils, X 
+import {
+  ArrowRight, Play, MapPin, Calendar, CheckCircle2, Star, Shield,
+  Award, Rocket, Mail, User, Briefcase, Phone, Building2,
+  Loader2, Check, AlertCircle, ChevronDown, Flame, ExternalLink, Instagram, Ticket, Utensils, X
 } from 'lucide-react';
 
 // --- SCHEMA SEO JSON-LD ---
@@ -204,7 +204,7 @@ interface FAQ {
 interface Sponsor {
   id: number;
   nombre: string;
-  archivo: string; 
+  archivo: string;
   nota?: string;
 }
 
@@ -242,13 +242,13 @@ export default function Home() {
   const [isSponsorModalOpen, setSponsorModalOpen] = useState(false);
   const [isPlayingMobile, setIsPlayingMobile] = useState(false);
   const [isPlayingDesktop, setIsPlayingDesktop] = useState(false);
-  
+
   // Estado para la barra de progreso (urgencia)
   const [soldPercentage, setSoldPercentage] = useState(0);
 
   // Estado para manejar el envío del formulario
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  
+
   // Estado para el newsletter
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -256,7 +256,7 @@ export default function Home() {
   // Estados Dinámicos para FAQs
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loadingFaqs, setLoadingFaqs] = useState(true);
-  
+
   // Estado para Sponsors
   const [sponsorsList, setSponsorsList] = useState<Sponsor[]>([]);
 
@@ -275,7 +275,7 @@ export default function Home() {
         if (resFaqs.ok) {
           const jsonFaqs = await resFaqs.json();
 
-          console.log("🔥 RESPUESTA FAQs:", jsonFaqs); 
+          console.log("🔥 RESPUESTA FAQs:", jsonFaqs);
           if (jsonFaqs.success && Array.isArray(jsonFaqs.data) && jsonFaqs.data.length > 0) {
             setFaqs(jsonFaqs.data);
           } else {
@@ -325,14 +325,14 @@ export default function Home() {
 
       setNewsletterStatus('success');
       setNewsletterEmail('');
-      
+
       setTimeout(() => {
         setNewsletterStatus('idle');
       }, 3000);
     } catch (error) {
       console.error("Error suscribiendo al newsletter:", error);
       setNewsletterStatus('error');
-      
+
       setTimeout(() => {
         setNewsletterStatus('idle');
       }, 3000);
@@ -344,7 +344,7 @@ export default function Home() {
     setFormStatus('loading');
     const form = e.currentTarget;
     const formData = new FormData(form);
-    
+
     const data = {
       nombre: String(formData.get('nombre') ?? ''),
       puesto: String(formData.get('puesto') ?? ''),
@@ -369,7 +369,7 @@ export default function Home() {
       setFormStatus('error');
     }
   };
-  
+
   return (
     <main className="bg-brand-dark min-h-screen text-white overflow-x-hidden font-sans selection:bg-brand-lime selection:text-brand-dark pb-24 md:pb-0">
       <Header onReserve={() => setModalOpen(true)} />
@@ -379,7 +379,7 @@ export default function Home() {
         <div className="absolute top-0 left-0 w-full h-[600px] bg-brand-lime/5 blur-[120px] rounded-full pointer-events-none -translate-y-1/2" />
 
         <div className="max-w-7xl mx-auto w-full flex flex-col md:grid md:grid-cols-12 gap-10 lg:gap-16 items-center relative z-10">
-          
+
           {/* COLUMNA IZQUIERDA */}
           <div className="w-full md:col-span-7 flex flex-col items-center md:items-start text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 bg-white/5 rounded-full backdrop-blur-md mb-6 animate-in fade-in slide-in-from-left-4 duration-700">
@@ -399,27 +399,27 @@ export default function Home() {
 
             {/* VIDEO MÓVIL */}
             <div className="w-full max-w-[320px] aspect-video rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-gray-900 mb-8 md:hidden relative group mx-auto">
-                <div className="absolute top-2 right-2 z-20 bg-brand-lime text-brand-dark text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-lg">
-                  ★ El evento del año
-                </div>
-                {!isPlayingMobile ? (
-                 <button 
-                   onClick={() => setIsPlayingMobile(true)}
-                   className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-10"
-                 >
-                   <Image src="/assets/images/video-cover.jpg" alt="Video" fill className="object-cover opacity-90" priority />
-                   <div className="absolute inset-0 bg-black/20" />
-                   <div className="relative z-30 w-14 h-14 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center shadow-2xl">
-                      <Play className="w-6 h-6 text-white fill-current ml-1" />
-                   </div>
-                 </button>
-               ) : (
-                 <iframe 
-                   className="w-full h-full"
-                   src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0&modestbranding=1&playsinline=1`} 
-                   title="Video Mobile" allow="autoplay; encrypted-media" allowFullScreen style={{ border: 0 }}
-                 ></iframe>
-               )}
+              <div className="absolute top-2 right-2 z-20 bg-brand-lime text-brand-dark text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-lg">
+                ★ El evento del año
+              </div>
+              {!isPlayingMobile ? (
+                <button
+                  onClick={() => setIsPlayingMobile(true)}
+                  className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-10"
+                >
+                  <Image src="/assets/images/video-cover.png" alt="Video" fill className="object-cover opacity-90" priority />
+                  <div className="absolute inset-0 bg-black/20" />
+                  <div className="relative z-30 w-14 h-14 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center shadow-2xl">
+                    <Play className="w-6 h-6 text-white fill-current ml-1" />
+                  </div>
+                </button>
+              ) : (
+                <iframe
+                  className="w-full h-full"
+                  src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                  title="Video Mobile" allow="autoplay; encrypted-media" allowFullScreen style={{ border: 0 }}
+                ></iframe>
+              )}
             </div>
 
             <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-white/90 mb-8 max-w-2xl leading-tight animate-in fade-in slide-in-from-bottom-3 delay-100">
@@ -438,9 +438,9 @@ export default function Home() {
                 </span>
               </div>
               <div className="h-3 md:h-4 w-full bg-white/10 rounded-full overflow-hidden border border-white/10 p-[2px]">
-                <div 
+                <div
                   className="h-full bg-gradient-to-r from-brand-lime/80 to-brand-lime rounded-full shadow-[0_0_20px_rgba(190,242,100,0.6)] transition-all duration-[1500ms] ease-out relative overflow-hidden"
-                  style={{ width: `${soldPercentage}%` }} 
+                  style={{ width: `${soldPercentage}%` }}
                 >
                   <div className="absolute top-0 left-0 bottom-0 w-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
                 </div>
@@ -450,76 +450,76 @@ export default function Home() {
 
             {/* BOTONES HERO */}
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-16 justify-center md:justify-start">
-              <button 
+              <button
                 onClick={() => setModalOpen(true)}
                 className="group relative bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black text-lg py-4 px-8 rounded-full shadow-[0_0_40px_-10px_rgba(190,242,100,0.3)] transition-all flex items-center justify-center gap-3 animate-pulse-fast hover:animate-none hover:scale-105 cursor-pointer uppercase min-h-[56px]"
               >
                 COMPRAR AHORA
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
-              <Link 
-                href="#agenda" 
+              <Link
+                href="#agenda"
                 className="px-8 py-4 rounded-full border border-white/10 hover:bg-white/5 font-bold text-white transition-all text-sm uppercase tracking-wider flex items-center justify-center min-h-[56px]"
               >
                 Ver Agenda
               </Link>
             </div>
 
-{/* MAIN PARTNERS (FULL COLOR, SIN OPACIDAD, CENTRADOS MOBILE) */}
+            {/* MAIN PARTNERS (FULL COLOR, SIN OPACIDAD, CENTRADOS MOBILE) */}
             <div className="w-full flex flex-col items-center md:items-start mt-8 lg:mt-10 mb-12">
-               <p className="text-[10px] md:text-xs text-gray-500 uppercase tracking-[0.2em] font-bold mb-6 text-center md:text-left">Main Partners</p>
-               
-               <div className="w-full flex flex-row items-center justify-center md:justify-start gap-6 md:gap-9">
-                  {/* Mercado Pago */}
-                  <div className="relative w-44 h-14 md:w-25 md:h-20"> 
-                    <Image 
-                      src="/sponsors/mercadopagoo.png" 
-                      alt="Mercado Pago" 
-                      fill 
-                      className="object-contain object-center md:object-left" 
-                    />
-                  </div>
+              <p className="text-[10px] md:text-xs text-gray-500 uppercase tracking-[0.2em] font-bold mb-6 text-center md:text-left">Main Partners</p>
 
-                  {/* Separador */}
-                  <div className="w-px h-10 md:h-14 bg-white/20" />
+              <div className="w-full flex flex-row items-center justify-center md:justify-start gap-6 md:gap-9">
+                {/* Mercado Pago */}
+                <div className="relative w-44 h-14 md:w-25 md:h-20">
+                  <Image
+                    src="/sponsors/mercadopagoo.png"
+                    alt="Mercado Pago"
+                    fill
+                    className="object-contain object-center md:object-left"
+                  />
+                </div>
 
-                  {/* Rappi */}
-                  <div className="relative w-32 h-14 md:w-44 md:h-20">
-                    <Image 
-                      src="/sponsors/rappii.png" 
-                      alt="Rappi" 
-                      fill 
-                      className="object-contain object-center md:object-left"
-                    />
-                  </div>
-               </div>
+                {/* Separador */}
+                <div className="w-px h-10 md:h-14 bg-white/20" />
+
+                {/* Rappi */}
+                <div className="relative w-32 h-14 md:w-44 md:h-20">
+                  <Image
+                    src="/sponsors/rappii.png"
+                    alt="Rappi"
+                    fill
+                    className="object-contain object-center md:object-left"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* COLUMNA DERECHA */}
           <div className="hidden md:flex md:col-span-5 justify-center md:justify-end relative">
             <div className="relative w-full max-w-[360px] aspect-[9/16] rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-brand-lime/5 group animate-in fade-in slide-in-from-right-8 duration-1000">
-               <div className="absolute top-4 right-4 z-20 bg-brand-lime text-brand-dark text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-lg transform rotate-2">
-                 ★ El evento del año
-               </div>
-               {!isPlayingDesktop ? (
-                 <button 
-                   onClick={() => setIsPlayingDesktop(true)}
-                   className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-10 bg-gray-900"
-                 >
-                   <Image src="/assets/images/video-cover.jpg" alt="Food Delivery Day Reel" fill className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" priority />
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-                   <div className="relative z-30 w-16 h-16 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
-                      <Play className="w-6 h-6 text-white fill-current ml-1" />
-                   </div>
-                 </button>
-               ) : (
-                 <iframe 
-                   className="w-full h-full animate-in fade-in duration-500"
-                   src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0&loop=1&playlist=${VIDEO_ID}`} 
-                   title="Food Delivery Day Aftermovie" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ border: 0 }}
-                 ></iframe>
-               )}
+              <div className="absolute top-4 right-4 z-20 bg-brand-lime text-brand-dark text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-lg transform rotate-2">
+                ★ El evento del año
+              </div>
+              {!isPlayingDesktop ? (
+                <button
+                  onClick={() => setIsPlayingDesktop(true)}
+                  className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-10 bg-gray-900"
+                >
+                  <Image src="/assets/images/video-cover.png" alt="Food Delivery Day Reel" fill className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" priority />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                  <div className="relative z-30 w-16 h-16 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
+                    <Play className="w-6 h-6 text-white fill-current ml-1" />
+                  </div>
+                </button>
+              ) : (
+                <iframe
+                  className="w-full h-full animate-in fade-in duration-500"
+                  src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0&modestbranding=1&playsinline=1&controls=0&loop=1&playlist=${VIDEO_ID}`}
+                  title="Food Delivery Day Aftermovie" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen style={{ border: 0 }}
+                ></iframe>
+              )}
             </div>
           </div>
         </div>
@@ -558,24 +558,25 @@ export default function Home() {
           <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">CONECTANDO <span className="text-brand-lime">EL FUTURO</span></h2>
           <p className="text-gray-400 text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
             Un espacio único donde dueños de restaurantes, gerentes de logística y líderes de tecnología comparten las claves del éxito en la era digital.
+            <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Reserva tu lugar! &gt;</button>
           </p>
-          
+
           <div className="grid sm:grid-cols-3 gap-6 text-left mb-12">
-             {[
-                "Tendencias en Dark Kitchens y última milla.",
-                "Estrategias de rentabilidad en apps.",
-                "Networking real con los que hacen el mercado."
-              ].map((item, i) => (
-                <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/5 flex flex-col gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-brand-lime" />
-                  <span className="text-gray-300 text-sm font-medium leading-snug">{item}</span>
-                </div>
-              ))}
+            {[
+              "Tendencias en Dark Kitchens y última milla.",
+              "Estrategias de rentabilidad en apps.",
+              "Networking real con los que hacen el mercado."
+            ].map((item, i) => (
+              <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/5 flex flex-col gap-3">
+                <CheckCircle2 className="w-6 h-6 text-brand-lime" />
+                <span className="text-gray-300 text-sm font-medium leading-snug">{item}</span>
+              </div>
+            ))}
           </div>
-          
+
           <div className="flex justify-center">
-            <button 
-              onClick={() => setModalOpen(true)} 
+            <button
+              onClick={() => setModalOpen(true)}
               className="w-full md:w-auto bg-white/10 hover:bg-white/20 border border-brand-lime/50 text-brand-lime font-bold text-lg py-4 px-10 rounded-full transition-all flex items-center justify-center gap-2 hover:scale-105 shadow-lg shadow-brand-lime/10 min-h-[56px] cursor-pointer"
             >
               COMPRAR AHORA
@@ -594,40 +595,40 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            
+
             {/* 1. EARLY BIRD (ACTIVO) */}
             <div className="bg-brand-lime/5 border-2 border-brand-lime rounded-2xl p-8 relative flex flex-col transform md:-translate-y-4 shadow-[0_0_40px_-10px_rgba(190,242,100,0.2)]">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-lime text-brand-dark text-xs font-black px-4 py-1 rounded-full uppercase tracking-wider shadow-lg flex items-center gap-1">
                 <Flame className="w-3 h-3 fill-current" /> Recomendado
               </div>
-              
+
               <h3 className="text-2xl font-black text-white mb-2">Lote 1: Early Bird</h3>
               <p className="text-xs text-brand-lime/70 font-bold uppercase tracking-wider mb-6">¡Quedan pocas!</p>
-              
+
               <div className="mb-6 space-y-3 border-b border-white/10 pb-6">
                 <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-300">Entrada General</span>
-                    <span className="text-3xl font-black text-brand-lime">$12.000</span>
+                  <span className="text-sm text-gray-300">Entrada General</span>
+                  <span className="text-3xl font-black text-brand-lime">$12.000</span>
                 </div>
                 <div className="flex items-center justify-between">
-                    <span className="text-sm text-white font-bold flex items-center gap-1">
-                        <Utensils className="w-3 h-3 text-brand-lime" /> c/ Almuerzo
-                    </span>
-                    <div className="flex flex-col items-end">
-                      <span className="text-xs text-gray-500 line-through font-medium">+$8.000</span>
-                      <span className="text-2xl font-bold text-white">$20.000</span>
-                    </div>
+                  <span className="text-sm text-white font-bold flex items-center gap-1">
+                    <Utensils className="w-3 h-3 text-brand-lime" /> c/ Almuerzo
+                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs text-gray-500 line-through font-medium">+$8.000</span>
+                    <span className="text-2xl font-bold text-white">$20.000</span>
+                  </div>
                 </div>
               </div>
-              
+
               <ul className="space-y-4 mb-8 flex-1">
                 <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> <span className="font-bold">Acceso preferencial</span> al evento</li>
                 <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> Coffee Break Premium</li>
                 <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> Acceso a todas las charlas</li>
                 <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> Kit de bienvenida</li>
               </ul>
-              
-              <button 
+
+              <button
                 onClick={() => setModalOpen(true)}
                 className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-4 rounded-xl shadow-lg transition-all transform active:scale-95 uppercase text-sm flex items-center justify-center gap-2"
               >
@@ -641,20 +642,20 @@ export default function Home() {
                 Próximamente
               </div>
               <h3 className="text-xl font-bold text-white mb-6">Lote 2: Anticipadas</h3>
-              
+
               <div className="mb-6 space-y-3 border-b border-white/10 pb-6 opacity-60">
                 <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400">Entrada General</span>
-                    <span className="text-2xl font-black text-white">$20.000</span>
+                  <span className="text-sm text-gray-400">Entrada General</span>
+                  <span className="text-2xl font-black text-white">$20.000</span>
                 </div>
                 <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400 font-bold flex items-center gap-1">
-                        <Utensils className="w-3 h-3" /> c/ Almuerzo
-                    </span>
-                    <div className="flex flex-col items-end">
-                      <span className="text-xs text-gray-500 font-medium">+$10.000</span>
-                      <span className="text-xl font-bold text-gray-300">$30.000</span>
-                    </div>
+                  <span className="text-sm text-gray-400 font-bold flex items-center gap-1">
+                    <Utensils className="w-3 h-3" /> c/ Almuerzo
+                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs text-gray-500 font-medium">+$10.000</span>
+                    <span className="text-xl font-bold text-gray-300">$30.000</span>
+                  </div>
                 </div>
               </div>
 
@@ -674,19 +675,19 @@ export default function Home() {
                 Última Instancia
               </div>
               <h3 className="text-xl font-bold text-gray-400 mb-6">Lote 3: General</h3>
-              
+
               <div className="mb-6 space-y-3 border-b border-white/10 pb-6">
                 <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Entrada General</span>
-                    <span className="text-2xl font-black text-gray-400">$25.000</span>
+                  <span className="text-sm text-gray-500">Entrada General</span>
+                  <span className="text-2xl font-black text-gray-400">$25.000</span>
                 </div>
                 <div className="flex items-center justify-between">
-                    <span className="text-sm text-red-400 font-bold flex items-center gap-1">
-                        <Utensils className="w-3 h-3" /> Almuerzo
-                    </span>
-                    <span className="text-xs font-bold text-red-400 border border-red-400/30 bg-red-400/10 px-2 py-1 rounded flex items-center gap-1">
-                        <X className="w-3 h-3" /> NO DISPONIBLE
-                    </span>
+                  <span className="text-sm text-red-400 font-bold flex items-center gap-1">
+                    <Utensils className="w-3 h-3" /> Almuerzo
+                  </span>
+                  <span className="text-xs font-bold text-red-400 border border-red-400/30 bg-red-400/10 px-2 py-1 rounded flex items-center gap-1">
+                    <X className="w-3 h-3" /> NO DISPONIBLE
+                  </span>
                 </div>
               </div>
 
@@ -711,13 +712,13 @@ export default function Home() {
             <h2 className="text-3xl md:text-5xl font-black mb-4">AGENDA CONFIRMADA</h2>
             <p className="text-gray-400">Una jornada intensiva con los líderes del sector.</p>
           </div>
-          
+
           <div className="space-y-2">
-            <AccordionItem time="09:00" title="Apertura de Puertas">Vení a visitar los stands participantes, retira tu acreditación y comenzá el networking.</AccordionItem>
-            <AccordionItem time="10:00 - 10:30" title="Panel: Gastronómicos & Delivery">Panel con 3 gastronómicos que supieron sacarle el jugo al delivery: <strong>Esteban Wolf</strong> (Founder & CEO Chocorisimo, Persicco, Guapaletas y Abuela Goye). <strong> Alejandro Cilley </strong> (CEO Tea Connection y Green Eat). <strong>Pablo Balan</strong> (Founder & CEO Mooi).</AccordionItem>
-            <AccordionItem time="11:30 - 12:00" title="El delivery no te salva... pero puede cambiarte la vida">Charla junto a <strong>Uriel Krimer (Co-Founder & CEO de Atomic Kitchens)</strong>.  1.500 franquicias virtuales en LATAM: las decisiones que hicieron la diferencia.</AccordionItem>
-            <AccordionItem time="14:00 - 14:30" title="¿Por qué el delivery es la mejor publicidad del mundo?">Charla junto a <strong>Franco Lena (Country Manager Rappi Argentina)</strong>: Cuando el crecimiento va en modo Turbo.</AccordionItem>
-            <AccordionItem time="15:30 - 16:00" title="Un solo ecosistema, mil oportunidades para tu restaurante">Charla junto a <strong>Francisco Matarazzo (Head de Food Delivery en Mercado Pago Argentina)</strong>: El futuro no es para los más grandes, es para los que se animan</AccordionItem>
+            <AccordionItem time="09:00" title="Apertura de Puertas">Vení a visitar los stands participantes, retira tu acreditación y comenzá el networking. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Asegurá tu entrada! &gt;</button></AccordionItem>
+            <AccordionItem time="10:00 - 10:30" title="Panel: Gastronómicos & Delivery">Panel con 3 gastronómicos que supieron sacarle el jugo al delivery: <strong>Esteban Wolf</strong> (Founder & CEO Chocorisimo, Persicco, Guapaletas y Abuela Goye). <strong> Alejandro Cilley </strong> (CEO Tea Connection y Green Eat). <strong>Pablo Balan</strong> (Founder & CEO Mooi). <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡No te lo pierdas! &gt;</button></AccordionItem>
+            <AccordionItem time="11:30 - 12:00" title="El delivery no te salva... pero puede cambiarte la vida">Charla junto a <strong>Uriel Krimer (Co-Founder & CEO de Atomic Kitchens)</strong>.  1.500 franquicias virtuales en LATAM: las decisiones que hicieron la diferencia. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Inspirate! &gt;</button></AccordionItem>
+            <AccordionItem time="14:00 - 14:30" title="¿Por qué el delivery es la mejor publicidad del mundo?">Charla junto a <strong>Franco Lena (Country Manager Rappi Argentina)</strong>: Cuando el crecimiento va en modo Turbo. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Reservá ya! &gt;</button></AccordionItem>
+            <AccordionItem time="15:30 - 16:00" title="Un solo ecosistema, mil oportunidades para tu restaurante">Charla junto a <strong>Francisco Matarazzo (Head de Food Delivery en Mercado Pago Argentina)</strong>: El futuro no es para los más grandes, es para los que se animan <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Sumate! &gt;</button></AccordionItem>
             <AccordionItem time="16:30" title="After & Cierre a Puro Humor: Gerardo Freideles">Stand Up de cierre para terminar el día: La gastronomía contada por un gastronómico. </AccordionItem>
           </div>
         </div>
@@ -734,7 +735,7 @@ export default function Home() {
               <Star className="w-6 h-6 text-yellow-400 fill-current" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[ { name: "Rappi", src: "/sponsors/rappii.png" }, { name: "Mercado Pago", src: "/sponsors/mercadopagoo.png" } ].map((sponsor) => (
+              {[{ name: "Rappi", src: "/sponsors/rappii.png" }, { name: "Mercado Pago", src: "/sponsors/mercadopagoo.png" }].map((sponsor) => (
                 <div key={sponsor.name} className="h-40 bg-white/5 border border-yellow-400/20 rounded-xl flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer p-8 relative group">
                   <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
                 </div>
@@ -748,7 +749,7 @@ export default function Home() {
               <Shield className="w-5 h-5 text-gray-300" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {[ { name: "Atomic Kitchens", src: "/sponsors/atomic.png" }, { name: "Rokket", src: "/sponsors/rokket.png" } ].map((sponsor) => (
+              {[{ name: "Atomic Kitchens", src: "/sponsors/atomic.png" }, { name: "Rokket", src: "/sponsors/rokket.png" }].map((sponsor) => (
                 <div key={sponsor.name} className="h-32 bg-white/5 border border-gray-500/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-6 relative group">
                   <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
                 </div>
@@ -756,32 +757,32 @@ export default function Home() {
             </div>
           </div>
           <div className="mb-16 border-t border-white/5 pt-12">
-             <div className="flex items-center justify-center gap-2 mb-8 drop-shadow-[0_0_12px_rgba(194,65,12,0.6)]">
-                <Award className="w-5 h-5 text-orange-700" />
-                <h3 className="text-orange-700 font-bold text-lg tracking-widest uppercase">Sponsors Bronce</h3>
-                <Award className="w-5 h-5 text-orange-700" />
-              </div>
-              <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto opacity-90">
-                {[ { name: "McCain", src: "/sponsors/mccainn.png" }, { name: "Guapaletas", src: "/sponsors/guapaletas.png" }, {name: "Mevak", src: "/sponsors/mevak.jpeg"} ].map((sponsor) => (
-                  <div key={sponsor.name} className="h-28 w-60 bg-white/5 border border-orange-800/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-4 relative group">
-                    <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
-                  </div>
-                ))}
-              </div>
+            <div className="flex items-center justify-center gap-2 mb-8 drop-shadow-[0_0_12px_rgba(194,65,12,0.6)]">
+              <Award className="w-5 h-5 text-orange-700" />
+              <h3 className="text-orange-700 font-bold text-lg tracking-widest uppercase">Sponsors Bronce</h3>
+              <Award className="w-5 h-5 text-orange-700" />
+            </div>
+            <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto opacity-90">
+              {[{ name: "McCain", src: "/sponsors/mccainn.png" }, { name: "Guapaletas", src: "/sponsors/guapaletas.png" }, { name: "Mevak", src: "/sponsors/mevak.jpeg" }].map((sponsor) => (
+                <div key={sponsor.name} className="h-28 w-60 bg-white/5 border border-orange-800/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-4 relative group">
+                  <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
+                </div>
+              ))}
+            </div>
           </div>
           <div className="mb-16">
-              <div className="flex items-center justify-center gap-2 mb-8 drop-shadow-[0_0_15px_rgba(190,242,100,0.6)]">
-                <Rocket className="w-5 h-5 text-brand-lime" />
-                <h3 className="text-brand-lime font-bold text-lg tracking-widest uppercase">Sponsors Emprendedor</h3>
-                <Rocket className="w-5 h-5 text-brand-lime" />
-              </div>
-              <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto opacity-90">
-                {[ { name: "RapiBoy", src: "/sponsors/rapiboy.png" }, { name: "MasDelivery", src: "/sponsors/masdelivery.png" }, { name: "Food Packaging", src: "/sponsors/food-packaging.svg" }, { name: "SourcingUp", src: "/sponsors/sourcingup.png" }, { name: "OmAgency", src: "/sponsors/omagency.png" } ].map((sponsor) => (
-                  <div key={sponsor.name} className="h-24 w-36 md:w-48 bg-white/5 border border-lime-400/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-3 relative group">
-                    <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
-                  </div>
-                ))}
-              </div>
+            <div className="flex items-center justify-center gap-2 mb-8 drop-shadow-[0_0_15px_rgba(190,242,100,0.6)]">
+              <Rocket className="w-5 h-5 text-brand-lime" />
+              <h3 className="text-brand-lime font-bold text-lg tracking-widest uppercase">Sponsors Emprendedor</h3>
+              <Rocket className="w-5 h-5 text-brand-lime" />
+            </div>
+            <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto opacity-90">
+              {[{ name: "RapiBoy", src: "/sponsors/rapiboy.png" }, { name: "MasDelivery", src: "/sponsors/masdelivery.png" }, { name: "Food Packaging", src: "/sponsors/food-packaging.svg" }, { name: "SourcingUp", src: "/sponsors/sourcingup.png" }, { name: "OmAgency", src: "/sponsors/omagency.png" }].map((sponsor) => (
+                <div key={sponsor.name} className="h-24 w-36 md:w-48 bg-white/5 border border-lime-400/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-3 relative group">
+                  <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -795,7 +796,7 @@ export default function Home() {
             <p className="text-gray-400 max-w-lg mx-auto mb-10">
               Posicioná tu marca ante los líderes de la industria. Completá el formulario y te enviaremos nuestra propuesta comercial.
             </p>
-            <button 
+            <button
               onClick={() => setSponsorModalOpen(true)}
               className="bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-4 px-10 rounded-xl transition-all uppercase tracking-wide shadow-[0_0_20px_rgba(190,242,100,0.4)]"
             >
@@ -829,8 +830,8 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <h3 className="text-white font-bold uppercase tracking-wider mb-6 text-xs">Sobre Food Delivery Day</h3>
           <p>
-            <strong>Food Delivery Day 2026</strong> es el evento estratégico más importante de Latinoamérica dedicado a revolucionar el ecosistema del delivery y la gastronomía digital. 
-            Programado para el <strong>11 de marzo de 2026 en Jano's Costanera, Buenos Aires</strong>, este encuentro se consolida como el punto de reunión definitivo para dueños de restaurantes, gerentes de logística y líderes de plataformas tecnológicas. 
+            <strong>Food Delivery Day 2026</strong> es el evento estratégico más importante de Latinoamérica dedicado a revolucionar el ecosistema del delivery y la gastronomía digital.
+            Programado para el <strong>11 de marzo de 2026 en Jano's Costanera, Buenos Aires</strong>, este encuentro se consolida como el punto de reunión definitivo para dueños de restaurantes, gerentes de logística y líderes de plataformas tecnológicas.
             Una plataforma única para el networking de alto nivel, enfocada en tendencias críticas como la optimización de la última milla, el auge de las dark kitchens y las estrategias de rentabilidad en apps.
           </p>
           <script
@@ -893,7 +894,7 @@ export default function Home() {
 
       {/* --- STICKY MOBILE CTA (SOLO MOBILE) --- */}
       <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden animate-in slide-in-from-bottom-10 fade-in duration-700">
-        <button 
+        <button
           onClick={() => setModalOpen(true)}
           className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black text-lg py-4 rounded-full shadow-[0_0_20px_rgba(190,242,100,0.4)] border border-white/20 backdrop-blur-sm transition-transform active:scale-95 flex items-center justify-center gap-2"
         >
@@ -902,10 +903,10 @@ export default function Home() {
       </div>
 
       <BookingModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
-      <SponsorModal 
-        isOpen={isSponsorModalOpen} 
-        onClose={() => setSponsorModalOpen(false)} 
-        onSubmit={handleSponsorSubmit} 
+      <SponsorModal
+        isOpen={isSponsorModalOpen}
+        onClose={() => setSponsorModalOpen(false)}
+        onSubmit={handleSponsorSubmit}
         formStatus={formStatus}
         setFormStatus={setFormStatus}
       />
