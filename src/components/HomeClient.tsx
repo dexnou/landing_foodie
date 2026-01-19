@@ -407,7 +407,7 @@ export default function Home() {
                   onClick={() => setIsPlayingMobile(true)}
                   className="absolute inset-0 w-full h-full flex items-center justify-center group cursor-pointer z-10"
                 >
-                  <Image src="/assets/images/video-cover.png" alt="Video" fill className="object-cover opacity-90" priority />
+                  <Image src="/assets/images/video-cover.png" alt="Video" fill className="object-cover object-[center_20%] opacity-90" priority />
                   <div className="absolute inset-0 bg-black/20" />
                   <div className="relative z-30 w-14 h-14 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center shadow-2xl">
                     <Play className="w-6 h-6 text-white fill-current ml-1" />
@@ -623,9 +623,9 @@ export default function Home() {
 
               <ul className="space-y-4 mb-8 flex-1">
                 <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> <span className="font-bold">Acceso preferencial</span> al evento</li>
-                <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> Coffee Break Premium</li>
                 <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> Acceso a todas las charlas</li>
-                <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> Kit de bienvenida</li>
+                <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> Visita a todos los stands.</li>
+                <li className="flex items-start gap-3 text-sm text-white"><Check className="w-4 h-4 text-brand-lime mt-0.5 flex-shrink-0" /> Participación after-office y standup</li>
               </ul>
 
               <button
@@ -716,7 +716,7 @@ export default function Home() {
           <div className="space-y-2">
             <AccordionItem time="09:00" title="Apertura de Puertas">Vení a visitar los stands participantes, retira tu acreditación y comenzá el networking. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Asegurá tu entrada! &gt;</button></AccordionItem>
             <AccordionItem time="10:00 - 10:30" title="Panel: Gastronómicos & Delivery">Panel con 3 gastronómicos que supieron sacarle el jugo al delivery: <strong>Esteban Wolf</strong> (Founder & CEO Chocorisimo, Persicco, Guapaletas y Abuela Goye). <strong> Alejandro Cilley </strong> (CEO Tea Connection y Green Eat). <strong>Pablo Balan</strong> (Founder & CEO Mooi). <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡No te lo pierdas! &gt;</button></AccordionItem>
-            <AccordionItem time="11:30 - 12:00" title="El delivery no te salva... pero puede cambiarte la vida">Charla junto a <strong>Uriel Krimer (Co-Founder & CEO de Atomic Kitchens)</strong>.  1.500 franquicias virtuales en LATAM: las decisiones que hicieron la diferencia. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Inspirate! &gt;</button></AccordionItem>
+            <AccordionItem time="11:30 - 12:00" title="El delivery no te salva... pero puede cambiarte la vida">Charla junto a <strong>Uriel Krimer (Co-Founder & CEO de Atomic Kitchens)</strong>.  +1.500 franquicias virtuales en LATAM: las decisiones que hicieron la diferencia. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Inspirate! &gt;</button></AccordionItem>
             <AccordionItem time="14:00 - 14:30" title="¿Por qué el delivery es la mejor publicidad del mundo?">Charla junto a <strong>Franco Lena (Country Manager Rappi Argentina)</strong>: Cuando el crecimiento va en modo Turbo. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Reservá ya! &gt;</button></AccordionItem>
             <AccordionItem time="15:30 - 16:00" title="Un solo ecosistema, mil oportunidades para tu restaurante">Charla junto a <strong>Francisco Matarazzo (Head de Food Delivery en Mercado Pago Argentina)</strong>: El futuro no es para los más grandes, es para los que se animan <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Sumate! &gt;</button></AccordionItem>
             <AccordionItem time="16:30" title="After & Cierre a Puro Humor: Gerardo Freideles">Stand Up de cierre para terminar el día: La gastronomía contada por un gastronómico. </AccordionItem>
@@ -763,7 +763,7 @@ export default function Home() {
               <Award className="w-5 h-5 text-orange-700" />
             </div>
             <div className="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto opacity-90">
-              {[{ name: "McCain", src: "/sponsors/mccainn.png" }, { name: "Guapaletas", src: "/sponsors/guapaletas.png" }, { name: "Mevak", src: "/sponsors/mevak.jpeg" }].map((sponsor) => (
+              {[{ name: "McCain", src: "/sponsors/mccainn.png" }, { name: "Guapaletas", src: "/sponsors/guapaletas.png" }, { name: "Mevak", src: "/sponsors/mevakk.png" }].map((sponsor) => (
                 <div key={sponsor.name} className="h-28 w-60 bg-white/5 border border-orange-800/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-4 relative group">
                   <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
                 </div>

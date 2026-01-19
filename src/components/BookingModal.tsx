@@ -12,8 +12,7 @@ type BookingState = 'idle' | 'creating' | 'pending_payment' | 'paid' | 'error';
 
 // --- CONFIGURACIÓN DE PRECIOS Y FECHAS ---
 const PRICE_CONFIG = {
-  increaseDate: '2026-03-01T00:00:00', // Fecha del próximo aumento
-  nextPricePercentage: 30, // Porcentaje de aumento estimado
+  increaseDate: '2026-01-30T00:00:00', // Fecha del próximo aumento
   batchName: 'Lote 1: Early Bird',
   basePrice: 12000,
   lunchPrice: 8000
@@ -24,14 +23,14 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const [includeLunch, setIncludeLunch] = useState(false);
   const [optIn, setOptIn] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  
+
   // Estado para la cuenta regresiva
-  const [timeLeft, setTimeLeft] = useState<{days: number, hours: number, minutes: number, seconds: number} | null>(null);
+  const [timeLeft, setTimeLeft] = useState<{ days: number, hours: number, minutes: number, seconds: number } | null>(null);
 
   const [formData, setFormData] = useState({
     company: '',
-    firstName: '', 
-    lastName: '',  
+    firstName: '',
+    lastName: '',
     email: '',
     phone: ''
   });
@@ -42,7 +41,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   // Usamos los precios de la configuración
   const unitPrice = includeLunch ? PRICE_CONFIG.basePrice + PRICE_CONFIG.lunchPrice : PRICE_CONFIG.basePrice;
   const totalPrice = unitPrice * quantity;
-  
+
   const trackingDataRef = useRef({ quantity, unitPrice, totalPrice, includeLunch });
 
   // --- LÓGICA DE CUENTA REGRESIVA ---
@@ -51,7 +50,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
       const target = new Date(PRICE_CONFIG.increaseDate);
       const now = new Date();
       const difference = +target - +now;
-      
+
       if (difference > 0) {
         return {
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -100,7 +99,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
 
     if (bookingState === 'pending_payment' && orderId) {
       console.log(`🔄 Esperando pago para OrderID: ${orderId}...`);
-      
+
       interval = setInterval(async () => {
         try {
           // Endpoint local seguro
@@ -109,7 +108,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orderid: orderId })
           });
-          
+
           if (res.ok) {
             const data = await res.json();
             const isPaid = data.response === true;
@@ -117,7 +116,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             if (isPaid) {
               setBookingState('paid');
               clearInterval(interval);
-              
+
               // Disparar email de confirmación (Fire & Forget)
               fetch('/api/orders/confirm', {
                 method: 'POST',
@@ -129,7 +128,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
 
               if (typeof window !== 'undefined') {
                 (window as any).dataLayer = (window as any).dataLayer || [];
-                (window as any).dataLayer.push({ 
+                (window as any).dataLayer.push({
                   event: 'purchase',
                   order_id: orderId,
                   value: totalPrice,
@@ -146,7 +145,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
         } catch (error) {
           console.error("Error verificando pago:", error);
         }
-      }, 3000); 
+      }, 3000);
     }
 
     return () => clearInterval(interval);
@@ -160,14 +159,14 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBookingState('creating');
-    
+
     try {
       // Endpoint local seguro
       const response = await fetch('/api/orders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nombre: formData.firstName, 
+          nombre: formData.firstName,
           apellido: formData.lastName,
           email: formData.email,
           almuerzo: includeLunch,
@@ -203,14 +202,14 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-4 sm:p-6">
-      <div 
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      <div
         className="absolute inset-0 bg-black/80 animate-fade-in"
         onClick={onClose}
       />
-      
-      <div className="bg-white rounded-t-2xl md:rounded-2xl w-full max-w-md overflow-hidden relative z-10 animate-zoom-in shadow-2xl flex flex-col max-h-[90vh]">
-        
+
+      <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden relative z-10 animate-zoom-in shadow-2xl flex flex-col max-h-[90vh]">
+
         <div className="bg-gray-50 p-4 flex justify-between items-center border-b border-gray-100 flex-shrink-0">
           <div>
             <h3 className="font-bold text-gray-900 text-lg">
@@ -228,7 +227,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
         <div className="p-5 overflow-y-auto">
           {bookingState === 'idle' && (
             <form className="space-y-5" onSubmit={handleSubmit}>
-              
+
               {/* --- BANNER DE CUENTA REGRESIVA --- */}
               {timeLeft && (
                 <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
@@ -238,12 +237,9 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                       <p className="text-orange-800 font-bold text-xs uppercase tracking-wide">
                         ¡Subida de Precio Inminente!
                       </p>
-                      <span className="bg-orange-200 text-orange-800 text-[10px] px-1.5 py-0.5 rounded font-bold">
-                        +{PRICE_CONFIG.nextPricePercentage}%
-                      </span>
                     </div>
                     <p className="text-orange-700 text-xs leading-relaxed">
-                      El lote actual finaliza en: 
+                      El lote actual finaliza en:
                       <span className="font-mono font-bold text-sm bg-white/60 px-1.5 py-0.5 rounded ml-1 text-orange-900 border border-orange-200 inline-block mt-1">
                         {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
                       </span>
@@ -270,8 +266,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 </div>
 
                 <div className="flex items-center justify-between bg-white p-2 rounded-lg border border-gray-200 shadow-sm">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={decreaseQuantity}
                     className="p-2 hover:bg-gray-100 rounded-md transition-colors text-gray-600 disabled:opacity-50 active:scale-95"
                     disabled={quantity <= 1}
@@ -279,8 +275,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                     <Minus className="w-4 h-4" />
                   </button>
                   <span className="font-bold text-gray-900 w-8 text-center select-none text-xl">{quantity}</span>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={increaseQuantity}
                     className="p-2 hover:bg-gray-100 rounded-md transition-colors text-gray-600 active:scale-95"
                   >
@@ -293,7 +289,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Nombre de la Empresa</label>
                 <input required name="company" value={formData.company} onChange={handleInputChange} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none transition-all min-h-[44px]" placeholder="Ej: Rappi" />
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Nombre</label>
@@ -306,11 +302,11 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="space-y-1">
+                <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Email</label>
                   <input required name="email" value={formData.email} onChange={handleInputChange} type="email" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="nombre@empresa.com" />
                 </div>
-                 <div className="space-y-1">
+                <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Teléfono</label>
                   <input required name="phone" value={formData.phone} onChange={handleInputChange} type="tel" className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 focus:ring-2 focus:ring-brand-lime outline-none min-h-[44px]" placeholder="+54 9 11 6633-2233" />
                 </div>
@@ -318,10 +314,10 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
 
               <div className="flex items-start gap-3 pt-1">
                 <div className="relative flex items-center">
-                  <input 
-                    type="checkbox" 
-                    id="opt-in" 
-                    checked={optIn} 
+                  <input
+                    type="checkbox"
+                    id="opt-in"
+                    checked={optIn}
                     onChange={(e) => setOptIn(e.target.checked)}
                     className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-gray-300 bg-gray-50 transition-all checked:border-brand-lime checked:bg-brand-lime focus:ring-2 focus:ring-brand-lime focus:ring-offset-1"
                   />
@@ -332,7 +328,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 </label>
               </div>
 
-              <div 
+              <div
                 className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-brand-lime transition-colors group"
                 onClick={() => setIncludeLunch(!includeLunch)}
               >
@@ -374,7 +370,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                   Por favor completa el pago en Mercado Pago para confirmar tu lugar.
                 </p>
               </div>
-              
+
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 w-full">
                 <div className="flex items-center justify-center gap-2 text-sm text-gray-500 font-medium">
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -383,9 +379,9 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               </div>
 
               {paymentLink && (
-                <a 
-                  href={paymentLink} 
-                  target="_blank" 
+                <a
+                  href={paymentLink}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-brand-lime font-bold text-sm hover:underline mt-2 block"
                 >
@@ -406,8 +402,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                   Tu entrada ha sido confirmada.
                 </p>
               </div>
-              
-              <Link 
+
+              <Link
                 href={`/success/${orderId}?qty=${quantity}`}
                 className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-brand-lime/20 flex items-center justify-center gap-2"
                 onClick={onClose}
@@ -415,8 +411,8 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 IR A MIS ENTRADAS
                 <ArrowRight className="w-5 h-5" />
               </Link>
-              
-              <button 
+
+              <button
                 onClick={onClose}
                 className="text-gray-400 hover:text-gray-600 text-sm font-medium"
               >
@@ -431,7 +427,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 <X className="w-8 h-8 text-red-600" />
               </div>
               <p className="text-gray-800">Hubo un error al conectar con el servidor.</p>
-              <button 
+              <button
                 onClick={() => setBookingState('idle')}
                 className="text-brand-lime font-bold hover:underline"
               >
