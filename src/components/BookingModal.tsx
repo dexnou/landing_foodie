@@ -119,13 +119,23 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               clearInterval(interval);
 
               // Disparar email de confirmación (Fire & Forget)
+              const { quantity, unitPrice, totalPrice, includeLunch } = trackingDataRef.current;
+              // Usamos el estado del formulario actual, asumiendo que no cambió desde que se creó la orden
+              // Si fuera crítico, deberíamos guardarlo en un ref al momento del submit
+
               fetch('/api/orders/confirm', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderid: orderId })
+                body: JSON.stringify({
+                  orderid: orderId,
+                  name: formData.firstName,
+                  email: formData.email,
+                  ticketType: includeLunch ? 'Entrada Full Experience' : 'Entrada General',
+                  quantity: quantity,
+                  unitPrice: `$${unitPrice.toLocaleString('es-AR')}`,
+                  totalPrice: `$${totalPrice.toLocaleString('es-AR')}`
+                })
               }).catch(err => console.error("Error disparando email confirmación:", err));
-
-              const { quantity, unitPrice, totalPrice, includeLunch } = trackingDataRef.current;
 
               if (typeof window !== 'undefined') {
                 (window as any).dataLayer = (window as any).dataLayer || [];

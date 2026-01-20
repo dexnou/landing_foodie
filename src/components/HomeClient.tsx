@@ -471,7 +471,7 @@ export default function Home() {
 
               <div className="w-full flex flex-row items-center justify-center md:justify-start gap-6 md:gap-9">
                 {/* Mercado Pago */}
-                <div className="relative w-44 h-14 md:w-25 md:h-20">
+                <div className="relative w-56 h-20 md:w-32 md:h-20">
                   <Image
                     src="/sponsors/mercadopagoo.png"
                     alt="Mercado Pago"
@@ -484,7 +484,7 @@ export default function Home() {
                 <div className="w-px h-10 md:h-14 bg-white/20" />
 
                 {/* Rappi */}
-                <div className="relative w-32 h-14 md:w-44 md:h-20">
+                <div className="relative w-48 h-20 md:w-44 md:h-20">
                   <Image
                     src="/sponsors/rappii.png"
                     alt="Rappi"
@@ -493,6 +493,13 @@ export default function Home() {
                   />
                 </div>
               </div>
+
+              <Link
+                href="#sponsors"
+                className="mt-6 text-sm text-gray-400 font-medium hover:text-brand-lime transition-colors border-b border-gray-600 hover:border-brand-lime pb-0.5"
+              >
+                Mirá todos los sponsors
+              </Link>
             </div>
           </div>
 

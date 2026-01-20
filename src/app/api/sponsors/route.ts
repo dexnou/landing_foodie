@@ -19,17 +19,29 @@ export async function POST(request: Request) {
       body: JSON.stringify(body)
     });
 
-let data;
+    let data;
     try {
-        data = await res.json();
+      data = await res.json();
     } catch {
-        data = { success: res.ok };
+      data = { success: res.ok };
     }
 
     // Si falla el backend, devolvemos el error al front
     if (!res.ok) {
-        return NextResponse.json(data, { status: res.status });
+      return NextResponse.json(data, { status: res.status });
     }
+
+    // --- ENVIAR NOTIFICACIÓN EMAIL (Fire & Forget) ---
+    import('@/lib/mail').then(({ sendSponsorLeadEmail }) => {
+      sendSponsorLeadEmail({
+        nombre: body.nombre,
+        puesto: body.puesto,
+        empresa: body.empresa,
+        telefono: body.telefono,
+        email: body.email,
+        nota: body.nota
+      }).catch(err => console.error("Error enviando email sponsor:", err));
+    });
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
