@@ -8,6 +8,34 @@ interface ConfirmationEmailProps {
     totalPrice: string;
 }
 
+const notifyDiscord = async (title: string, fields: any[], webhookUrl?: string) => {
+    const url = webhookUrl || process.env.DISCORD_WEBHOOK_URL;
+    if (!url) {
+        console.warn("⚠️ No Discord Webhook configured for notification skipping.");
+        return;
+    }
+
+    const body = JSON.stringify({
+        content: "⚠️ **Fallo en envío de Email - Fallback activado**",
+        embeds: [{
+            title,
+            color: 15158332, // Rojo
+            fields: fields.slice(0, 25)
+        }]
+    });
+
+    try {
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body
+        });
+        console.log("✅ Notificación de fallo enviada a Discord.");
+    } catch (error) {
+        console.error("❌ Error enviando a Discord:", error);
+    }
+};
+
 export const sendOrderConfirmationEmail = async ({
     to,
     name,
@@ -184,7 +212,25 @@ export const sendSponsorLeadEmail = async ({
     // Email donde llega la notificación
     const NOTIFICATION_EMAIL = process.env.CONTACT_EMAIL;
 
-    if (!BREVO_API_KEY) return false;
+    const performFallback = async (reason: string) => {
+        await notifyDiscord(
+            `❌ Error enviando Lead de Sponsor: ${empresa}`,
+            [
+                { name: "Error", value: reason },
+                { name: "Empresa", value: empresa },
+                { name: "Contacto", value: `${nombre} (${puesto})` },
+                { name: "Email", value: email },
+                { name: "Teléfono", value: telefono },
+                { name: "Mensaje", value: nota ? nota.slice(0, 500) : "Sin mensaje" },
+            ],
+            process.env.FOODIE_DISCORD_SPONSORS_WEBHOOK_URL
+        );
+        return false;
+    };
+
+    if (!BREVO_API_KEY) {
+        return await performFallback("Falta API Key de Brevo");
+    }
 
     const htmlContent = `
     <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
@@ -207,7 +253,7 @@ export const sendSponsorLeadEmail = async ({
     `;
 
     try {
-        await fetch('https://api.brevo.com/v3/smtp/email', {
+        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
             method: 'POST',
             headers: {
                 'accept': 'application/json',
@@ -222,10 +268,19 @@ export const sendSponsorLeadEmail = async ({
                 htmlContent: htmlContent
             })
         });
+
+        if (!res.ok) {
+            const errData = await res.json();
+            console.error("Error brevo response:", errData);
+            return await performFallback(`Error API Brevo: ${res.status}`);
+        }
+
         console.log(`Email de lead de sponsor enviado a ${NOTIFICATION_EMAIL} vía Brevo`);
         return true;
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error enviando lead de sponsor:', error);
-        return false;
+        return await performFallback(`Error de Red: ${error.message}`);
     }
 };
+
+
