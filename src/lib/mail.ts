@@ -67,18 +67,18 @@ export const sendOrderConfirmationEmail = async ({
         table { border-collapse: collapse; }
         .wrapper { width: 100%; background-color: #1a1a1a; padding: 40px 0; }
         .container { max-width: 600px; margin: 0 auto; background-color: #111111; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
+
         /* COLORES DE MARCA */
         .bg-pink { background-color: #ff0054; }
         .text-pink { color: #ff0054; }
         .bg-dark { background-color: #111111; }
         .bg-footer { background-color: #0a0a0a; }
-        
+
         /* ESTILOS TEXTO */
         h1 { color: #ffffff; font-size: 28px; font-weight: 800; margin: 0; line-height: 1.2; }
         p { color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0; }
         .strong { color: #ffffff; font-weight: bold; }
-        
+
         /* BOTÓN */
         .btn { display: inline-block; padding: 16px 32px; background-color: #ff0054; color: #ffffff !important; text-decoration: none; font-weight: bold; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; font-size: 14px; transition: background-color 0.3s; }
         .btn:hover { background-color: #d60046; }
@@ -95,7 +95,7 @@ export const sendOrderConfirmationEmail = async ({
         <tr>
             <td align="center">
                 <table class="container" width="600" cellpadding="0" cellspacing="0">
-                    
+
                     <tr>
                         <td class="bg-pink" align="center" style="padding: 40px 30px;">
                             <img src="https://www.fooddeliveryday.com.ar/logo-foodie.png" alt="Food Delivery Day" width="160" style="display: block; margin-bottom: 20px;">
@@ -108,7 +108,7 @@ export const sendOrderConfirmationEmail = async ({
                         <td class="bg-dark" style="padding: 40px 30px;">
                             <p>Hola <span class="strong">${name}</span>,</p>
                             <p>Confirmamos la recepción de tu pago. Ya sos parte del evento que va a revolucionar el delivery en Argentina.</p>
-                            
+
                             <table class="receipt" width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td colspan="2" style="text-transform: uppercase; font-size: 12px; color: #666; letter-spacing: 1px; padding-bottom: 10px;">
@@ -137,7 +137,7 @@ export const sendOrderConfirmationEmail = async ({
 
                     <tr>
                         <td class="bg-footer" style="padding: 30px; text-align: center; border-top: 1px solid #333;">
-                            <p style="font-size: 12px; color: #666; margin-bottom: 10px;"></p>                            
+                            <p style="font-size: 12px; color: #666; margin-bottom: 10px;"></p>
                             <p style="font-size: 11px; color: #444; margin-top: 20px;">
                                 © 2026 Food Delivery Day. Todos los derechos reservados.<br>
                                 Av. Rafael Obligado 6340, CABA, Argentina.
@@ -238,7 +238,7 @@ export const sendSponsorLeadEmail = async ({
         <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
             <h2 style="color: #333; border-bottom: 2px solid #ff0054; padding-bottom: 10px;">🚀 Nuevo Lead de Sponsor</h2>
             <p>Alguien quiere ser sponsor del evento:</p>
-            
+
             <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                 <tr><td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Nombre:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${nombre}</td></tr>
                 <tr><td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold;">Empresa:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${empresa}</td></tr>
@@ -313,13 +313,13 @@ export const sendMagicLinkEmail = async (email: string, magicLinkUrl: string, is
                 .logo span { color: #ff0054; }
                 h1 { color: #ffffff; font-size: 24px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; }
                 p { color: #cccccc; font-size: 16px; margin-bottom: 30px; }
-                .button { 
-                    display: inline-block; 
-                    padding: 16px 32px; 
-                    background-color: #ff0054; 
-                    color: #ffffff !important; 
-                    text-decoration: none; 
-                    border-radius: 50px; 
+                .button {
+                    display: inline-block;
+                    padding: 16px 32px;
+                    background-color: #ff0054;
+                    color: #ffffff !important;
+                    text-decoration: none;
+                    border-radius: 50px;
                     font-weight: 900;
                     text-transform: uppercase;
                     letter-spacing: 1px;
@@ -335,11 +335,11 @@ export const sendMagicLinkEmail = async (email: string, magicLinkUrl: string, is
                 <div class="card">
                     <div class="logo">Food Delivery <span>Day</span></div>
                     <h1>${isPasswordReset ? 'Restablecer Contraseña' : 'Acceso a Disertantes & Entradas'}</h1>
-                    
+
                     <p>${isPasswordReset
             ? 'Recibimos una solicitud para restablecer tu contraseña.'
             : 'Hemos generado un acceso seguro para que puedas gestionar tus entradas.'}</p>
-                    
+
                     <a href="${magicLinkUrl}" class="button">
                         ${isPasswordReset ? 'Restablecer Contraseña' : 'Acceder a tus entradas'}
                     </a>
@@ -460,7 +460,7 @@ export const sendTicketAccessEmail = async ({
                     <div class="ticket-middle">
                         <span class="label">ASISTENTE</span>
                         <h2>${nombre} ${apellido}</h2>
-                        
+
                         <div style="margin-top: 15px;">
                             ${almuerzo
             ? '<span class="tag" style="background: #ff0054; color: #fff;">FULL EXPERIENCE (CON ALMUERZO)</span>'
@@ -472,7 +472,7 @@ export const sendTicketAccessEmail = async ({
                             <div class="qr-block">
                                 <img src="${qrImageUrl}" alt="QR Entrada" width="180" height="180" style="display: block;">
                             </div>
-                            <p style="font-size: 10px; color: #999; margin: 0;">ID: ${ticketId}</p>
+                            <p style="font-size: 10px; color: #999; margin: 0;">ID: ${token}</p>
                         </div>
 
                         <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px; text-align: left;">
@@ -535,7 +535,7 @@ export const sendTicketAccessEmail = async ({
             body: JSON.stringify({
                 sender: { name: SENDER_NAME, email: SENDER_EMAIL },
                 to: [{ email: email, name: `${nombre} ${apellido}` }],
-                subject: `🎟️ Tu entrada para Food Delivery Day #${ticketId}`,
+                subject: '🎟️ Tu entrada para Food Delivery Day',
                 htmlContent: htmlContent
             })
         });
