@@ -86,4 +86,12 @@ export const foodDayApi = {
             body: { email },
         });
     },
+
+    // NEW: Login with magic link token
+    loginWithMagicLink: async (token: string) => {
+        return apiCall('/api/auth/login-magic-link', {
+            method: 'POST',
+            body: { token },
+        });
+    },
 };

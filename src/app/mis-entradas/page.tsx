@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { foodDayApi } from '@/lib/api';
 import { authUtils, PROVINCIAS_ARGENTINA, INDUSTRIAS } from '@/lib/auth';
-import { Ticket as TicketIcon, Lock, User, Briefcase, MapPin, Linkedin, Edit3, CheckCircle2, AlertCircle, LogOut } from 'lucide-react';
+import { Ticket as TicketIcon, Lock, User, Briefcase, MapPin, Linkedin, Edit3, CheckCircle2, AlertCircle, LogOut, QrCode } from 'lucide-react';
 
 interface Ticket {
     prodinfoid: number;
@@ -20,6 +20,9 @@ interface Ticket {
     telefono: string | null;
     is_complete: number;
     updated_at: string | null;
+    // New fields
+    qr_code?: string;      // SVG string
+    ticket_token?: string;
 }
 
 export default function MisEntradasPage() {
@@ -31,6 +34,9 @@ export default function MisEntradasPage() {
     const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
+
+    // Modal para ver QR en grande
+    const [viewingQr, setViewingQr] = useState<Ticket | null>(null);
 
     useEffect(() => {
         const token = authUtils.getToken();
@@ -88,8 +94,13 @@ export default function MisEntradasPage() {
         }
 
         // Validations
-        if (!editingTicket.nombre || !editingTicket.apellido || !editingTicket.empresa || !editingTicket.provincia) {
-            setError('Nombre, apellido, empresa y provincia son obligatorios');
+        if (!editingTicket.nombre || !editingTicket.apellido || !editingTicket.empresa || !editingTicket.provincia || !editingTicket.mail) {
+            setError('Nombre, apellido, empresa, mail y provincia son obligatorios');
+            return;
+        }
+
+        if (editingTicket.mail && !editingTicket.mail.includes('@')) {
+            setError('Ingresá un email válido');
             return;
         }
 
@@ -112,22 +123,41 @@ export default function MisEntradasPage() {
                 apellido: editingTicket.apellido,
                 empresa: editingTicket.empresa,
                 provincia: editingTicket.provincia,
+                mail: editingTicket.mail, // Send email
                 industria: editingTicket.industria || null,
                 linkedin: editingTicket.linkedin || null,
                 interes: editingTicket.interes || null,
             });
 
             if (response.success) {
+                const updatedTicket = response.ticket;
+
                 setTickets(tickets.map(t =>
-                    t.prodinfoid === editingTicket.prodinfoid ? response.ticket : t
+                    t.prodinfoid === editingTicket.prodinfoid ? updatedTicket : t
                 ));
 
-                const completedCount = tickets.filter(t =>
-                    t.prodinfoid === editingTicket.prodinfoid ? response.ticket.is_complete : t.is_complete
-                ).length;
-                setProgress({ ...progress, completed: completedCount });
+                const newTickets = tickets.map(t =>
+                    t.prodinfoid === editingTicket.prodinfoid ? updatedTicket : t
+                );
+                const compl = newTickets.filter(t => t.is_complete).length;
+                setProgress({ ...progress, completed: compl });
 
                 setEditingTicket(null);
+
+                // Enviar email si quedó completo
+                if (response.ticket && response.ticket.is_complete && editingTicket.mail) {
+                    fetch('/api/tickets/email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nombre: response.ticket.nombre,
+                            apellido: response.ticket.apellido,
+                            email: editingTicket.mail,
+                            ticketId: response.ticket.prodinfoid,
+                            token: response.ticket.ticket_token
+                        })
+                    }).catch(err => console.error("Error enviando email ticket:", err));
+                }
             }
         } catch (err: any) {
             setError(err.message || 'Error al guardar');
@@ -204,73 +234,92 @@ export default function MisEntradasPage() {
                     {tickets.map((ticket) => (
                         <div
                             key={ticket.prodinfoid}
-                            className="bg-white/5 border border-white/10 rounded-xl shadow-lg p-6 hover:border-brand-lime/30 transition-all hover:bg-white/[0.07] group"
+                            className="bg-white/5 border border-white/10 rounded-xl shadow-lg p-6 hover:border-brand-lime/30 transition-all hover:bg-white/[0.07] group flex flex-col md:flex-row gap-6"
                         >
-                            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 pb-6 border-b border-white/5">
-                                <div className="flex items-start gap-4">
-                                    <div className="bg-brand-lime/10 p-3 rounded-lg border border-brand-lime/20 group-hover:border-brand-lime/50 transition-colors">
-                                        <TicketIcon className="w-8 h-8 text-brand-lime" />
+                            {/* Left: Info */}
+                            <div className="flex-1">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="flex items-start gap-4">
+                                        <div className="bg-brand-lime/10 p-3 rounded-lg border border-brand-lime/20">
+                                            <TicketIcon className="w-8 h-8 text-brand-lime" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white mb-1">
+                                                Entrada #{ticket.prodinfoid}
+                                            </h3>
+                                            <p className="text-xs text-gray-500 font-mono">
+                                                ORDEN #{ticket.orderid}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-white mb-1">
-                                            Entrada #{ticket.prodinfoid}
-                                        </h3>
-                                        <p className="text-xs text-gray-500 font-mono">
-                                            ORDEN #{ticket.orderid}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-3 w-full sm:w-auto">
                                     {ticket.is_complete ? (
-                                        <span className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-green-500/10 text-green-400 border border-green-500/20 uppercase tracking-wide">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full text-xs font-bold uppercase tracking-wide">
                                             <CheckCircle2 className="w-3.5 h-3.5" /> Completa
                                         </span>
                                     ) : (
-                                        <span className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 uppercase tracking-wide">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-full text-xs font-bold uppercase tracking-wide">
                                             <AlertCircle className="w-3.5 h-3.5" /> Pendiente
                                         </span>
                                     )}
-
-                                    <button
-                                        onClick={() => handleEdit(ticket)}
-                                        className="flex-1 sm:flex-none px-4 py-1.5 bg-brand-lime hover:bg-brand-limeHover text-brand-dark rounded-full text-xs font-black uppercase tracking-wide transition-transform active:scale-95 flex items-center justify-center gap-2"
-                                    >
-                                        <Edit3 className="w-3.5 h-3.5" /> Editar
-                                    </button>
                                 </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
+                                    <div>
+                                        <span className="text-gray-500 text-xs font-bold uppercase block mb-1">Nombre</span>
+                                        <p className="font-medium text-white">{ticket.nombre || '-'}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-500 text-xs font-bold uppercase block mb-1">Apellido</span>
+                                        <p className="font-medium text-white">{ticket.apellido || '-'}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-500 text-xs font-bold uppercase block mb-1">Empresa</span>
+                                        <p className="font-medium text-white">{ticket.empresa || '-'}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-500 text-xs font-bold uppercase block mb-1">Provincia</span>
+                                        <p className="font-medium text-white">{ticket.provincia || '-'}</p>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => handleEdit(ticket)}
+                                    className="px-5 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-bold transition flex items-center gap-2"
+                                >
+                                    <Edit3 className="w-4 h-4" /> Editar Datos
+                                </button>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
-                                <div>
-                                    <span className="text-gray-500 text-xs font-bold uppercase block mb-1">Nombre</span>
-                                    <p className="font-medium text-white flex items-center gap-2">
-                                        <User className="w-3.5 h-3.5 text-gray-400" /> {ticket.nombre || '-'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <span className="text-gray-500 text-xs font-bold uppercase block mb-1">Apellido</span>
-                                    <p className="font-medium text-white">{ticket.apellido || '-'}</p>
-                                </div>
-                                <div>
-                                    <span className="text-gray-500 text-xs font-bold uppercase block mb-1">Empresa</span>
-                                    <p className="font-medium text-white flex items-center gap-2">
-                                        <Briefcase className="w-3.5 h-3.5 text-gray-400" /> {ticket.empresa || '-'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <span className="text-gray-500 text-xs font-bold uppercase block mb-1">Provincia</span>
-                                    <p className="font-medium text-white flex items-center gap-2">
-                                        <MapPin className="w-3.5 h-3.5 text-gray-400" /> {ticket.provincia || '-'}
-                                    </p>
-                                </div>
+                            {/* Right: QR Preview */}
+                            <div className="md:w-64 flex flex-col items-center justify-center p-4 bg-black/20 rounded-xl border border-white/5">
+                                {ticket.qr_code ? (
+                                    <>
+                                        <div
+                                            className="w-40 h-40 bg-white p-2 rounded-lg mb-4 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full"
+                                            dangerouslySetInnerHTML={{ __html: ticket.qr_code }}
+                                        />
+                                        <button
+                                            onClick={() => setViewingQr(ticket)}
+                                            className="w-full bg-brand-lime text-brand-dark font-black px-4 py-2 rounded-lg text-xs uppercase tracking-wide hover:shadow-[0_0_15px_rgba(255,0,84,0.4)] transition-all"
+                                        >
+                                            Ver QR Grande
+                                        </button>
+                                    </>
+                                ) : (
+                                    <div className="text-center text-gray-500 py-8">
+                                        <QrCode className="w-12 h-12 mx-auto mb-2 opacity-20" />
+                                        <p className="text-xs">
+                                            Completá los datos<br />para generar el QR
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Edit Modal */}
+            {/* Edit Modal (RESTAURADO COMPLETO) */}
             {editingTicket && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                     <div className="bg-[#1a1a1a] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 border border-white/10 relative">
@@ -332,6 +381,20 @@ export default function MisEntradasPage() {
                                     required
                                     value={editingTicket.empresa || ''}
                                     onChange={(e) => setEditingTicket({ ...editingTicket, empresa: e.target.value })}
+                                    className="w-full px-4 py-2.5 bg-black/30 border border-white/10 rounded-lg focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none text-white transition placeholder-gray-600"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase">
+                                    Email del Asistente *
+                                </label>
+                                <input
+                                    type="email"
+                                    required
+                                    placeholder="asistente@empresa.com"
+                                    value={editingTicket.mail || ''}
+                                    onChange={(e) => setEditingTicket({ ...editingTicket, mail: e.target.value })}
                                     className="w-full px-4 py-2.5 bg-black/30 border border-white/10 rounded-lg focus:ring-2 focus:ring-brand-lime focus:border-transparent outline-none text-white transition placeholder-gray-600"
                                 />
                             </div>
@@ -426,6 +489,32 @@ export default function MisEntradasPage() {
                         <p className="text-[10px] text-gray-600 mt-4 text-center uppercase tracking-widest">
                             * Campos obligatorios para acreditarse
                         </p>
+                    </div>
+                </div>
+            )}
+
+            {/* QR Zoom Modal */}
+            {viewingQr && viewingQr.qr_code && (
+                <div className="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 z-[60]" onClick={() => setViewingQr(null)}>
+                    <div className="bg-white p-4 rounded-xl max-w-sm w-full animate-in zoom-in-50 duration-200" onClick={e => e.stopPropagation()}>
+                        <div className="text-center mb-4">
+                            <h3 className="text-black font-bold text-lg uppercase tracking-wider mb-1">Tu Entrada</h3>
+                            <p className="text-gray-500 text-sm">Mostrá este código al ingresar</p>
+                        </div>
+                        <div
+                            className="w-full aspect-square bg-white flex items-center justify-center [&>svg]:w-full [&>svg]:h-full"
+                            dangerouslySetInnerHTML={{ __html: viewingQr.qr_code }}
+                        />
+                        <div className="mt-4 text-center">
+                            <p className="font-mono text-sm font-bold text-gray-800">#{viewingQr.prodinfoid}</p>
+                            <p className="text-xs text-gray-400 mt-1">{viewingQr.nombre} {viewingQr.apellido}</p>
+                        </div>
+                        <button
+                            onClick={() => setViewingQr(null)}
+                            className="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-lg transition-colors"
+                        >
+                            Cerrar
+                        </button>
                     </div>
                 </div>
             )}

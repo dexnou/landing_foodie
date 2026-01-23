@@ -1,3 +1,4 @@
+
 interface ConfirmationEmailProps {
     to: string;
     name: string;
@@ -384,3 +385,162 @@ export const sendMagicLinkEmail = async (email: string, magicLinkUrl: string, is
         return false;
     }
 }
+
+interface TicketAccessEmailProps {
+    nombre: string;
+    apellido: string;
+    email: string;
+    ticketId: string | number;
+    token: string;
+}
+
+export const sendTicketAccessEmail = async ({
+    nombre,
+    apellido,
+    email,
+    ticketId,
+    token
+}: TicketAccessEmailProps) => {
+    const BREVO_API_KEY = process.env.BREVO_API_KEY;
+    const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@fooddeliveryday.com.ar';
+    const SENDER_NAME = process.env.SENDER_NAME || 'Food Delivery Day';
+
+    if (!BREVO_API_KEY) {
+        console.warn('[Email] BREVO_API_KEY no configurada. Saltando envío de ticket.');
+        return false;
+    }
+
+    const baseUrl = 'http://www.fooddeliveryday.com.ar';
+    const qrData = encodeURIComponent(`${baseUrl}/entradas?token=${token}`);
+    const qrImageUrl = `https://quickchart.io/qr?text=${qrData}&size=300&margin=1&format=png`;
+
+    // Calendar Links
+    const calendarTitle = encodeURIComponent("Food Delivery Day - Argentina");
+    const calendarDetails = encodeURIComponent("Tu entrada para el evento. Presentá el QR adjunto al ingresar.");
+    const calendarLocation = encodeURIComponent("Jano's Costanera, Av. Rafael Obligado 6340, CABA");
+    const calendarDates = "20260311T120000Z/20260311T210000Z";
+    const calendarLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calendarTitle}&details=${calendarDetails}&location=${calendarLocation}&dates=${calendarDates}`;
+
+    const htmlContent = `
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Tu Entrada - Food Delivery Day</title>
+    <style type="text/css">
+        body { margin: 0; padding: 0; background-color: #1a1a1a; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        .wrapper { width: 100%; background-color: #1a1a1a; padding: 40px 0; }
+        .main-card { max-width: 400px; margin: 0 auto; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(255, 0, 84, 0.2); }
+        .ticket-top { background-color: #ff0054; padding: 30px 20px; text-align: center; border-bottom: 2px dashed rgba(0,0,0,0.2); position: relative; }
+        .header-logo { display: block; margin: 0 auto 20px auto; }
+        .ticket-middle { background-color: #ffffff; padding: 40px 20px; text-align: center; position: relative; }
+        .ticket-bottom { background-color: #111111; padding: 20px; text-align: center; border-top: 4px solid #ff0054; }
+        h1 { color: #ffffff; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
+        h2 { color: #1a1a1a; margin: 10px 0 5px 0; font-size: 22px; font-weight: 900; }
+        .label { color: #666; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px; display: block; }
+        .value { color: #1a1a1a; font-size: 16px; font-weight: bold; margin-bottom: 15px; display: block; }
+        .tag { display: inline-block; background: #1a1a1a; color: #ff0054; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; }
+        .qr-block { margin: 0 auto 20px auto; padding: 10px; border: 2px solid #1a1a1a; border-radius: 10px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <table class="wrapper" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td align="center">
+                <img src="https://www.fooddeliveryday.com.ar/logo-foodie.png" alt="Food Delivery Day" width="140" class="header-logo" style="margin-bottom: 30px;">
+                <div class="main-card">
+                    <div class="ticket-top">
+                        <h1>Ticket de Acceso</h1>
+                        <p style="color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 5px; margin-bottom: 0;">Presentá este código en la entrada</p>
+                    </div>
+
+                    <div class="ticket-middle">
+                        <span class="label">ASISTENTE</span>
+                        <h2>${nombre} ${apellido}</h2>
+                        
+                        <span class="tag">GENERAL</span> <div style="margin: 20px 0;">
+                            <div class="qr-block">
+                                <img src="${qrImageUrl}" alt="QR Entrada" width="180" height="180" style="display: block;">
+                            </div>
+                            <p style="font-size: 10px; color: #999; margin: 0;">ID: ${ticketId}</p>
+                        </div>
+
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px; text-align: left;">
+                            <tr>
+                                <td width="50%" valign="top">
+                                    <span class="label" style="color:#ff0054;">FECHA</span>
+                                    <span class="value">11 MARZO, 2026</span>
+                                </td>
+                                <td width="50%" valign="top" align="right">
+                                    <span class="label" style="color:#ff0054;">HORA</span>
+                                    <span class="value">09:00 HS</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="padding-top: 10px; border-top: 1px dashed #eee;">
+                                    <span class="label" style="color:#ff0054; margin-top: 10px;">LUGAR</span>
+                                    <span class="value">JANO'S COSTANERA</span>
+                                    <span style="display:block; font-size: 12px; color: #666; margin-top: -12px;">Av. Rafael Obligado 6340, CABA</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="ticket-bottom">
+                        <p style="color: #666; font-size: 12px; margin: 0;">
+                            Este ticket es único e intransferible.
+                        </p>
+                        <div style="margin-top: 15px;">
+                            <a href="${calendarLink}" style="color: #ff0054; text-decoration: none; font-size: 13px; font-weight: bold;">
+                                📅 Agregar a Google Calendar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <table width="400" cellpadding="0" cellspacing="0" style="margin-top: 30px;">
+                    <tr>
+                        <td align="center" style="color: #666; font-size: 11px;">
+                            <p>¿Tenés dudas? Escribinos a <a href="mailto:info@fooddeliveryday.com.ar" style="color: #ff0054; text-decoration: none;">info@fooddeliveryday.com.ar</a></p>
+                            <p>© 2026 Food Delivery Day Argentina.</p>
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+    `;
+
+    try {
+        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'api-key': BREVO_API_KEY,
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+                to: [{ email: email, name: `${nombre} ${apellido}` }],
+                subject: `🎟️ Tu entrada para Food Delivery Day #${ticketId}`,
+                htmlContent: htmlContent
+            })
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error('Error enviando ticket con Brevo:', errorData);
+            return false;
+        }
+
+        console.log(`Ticket enviado a ${email} vía Brevo`);
+        return true;
+    } catch (error) {
+        console.error('Error de red al enviar ticket con Brevo:', error);
+        return false;
+    }
+};

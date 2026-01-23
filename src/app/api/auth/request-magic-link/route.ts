@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         // Si hay token, enviamos el email desde aquí
         if (token) {
             const publicUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-            const magicLinkUrl = `${publicUrl}/crear-password?token=${token}`;
+            const magicLinkUrl = `${publicUrl}/login?token=${token}`;
 
             console.log(`[NextAPI] Enviando Magic Link a ${email}`);
             await sendMagicLinkEmail(email, magicLinkUrl, false); // false = es magic link normal, no reset

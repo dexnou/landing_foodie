@@ -1,14 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation'; 
+import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Check, X, Loader2, ArrowRight, UserPlus } from 'lucide-react';
 
 export default function SuccessPage() {
   const params = useParams();
-  const searchParams = useSearchParams(); 
+  const searchParams = useSearchParams();
   const orderId = Array.isArray(params.id) ? params.id[0] : params.id;
-  
+
   const qtyParam = searchParams.get('qty');
   const quantity = qtyParam ? parseInt(qtyParam) : 1;
 
@@ -27,28 +27,28 @@ export default function SuccessPage() {
         });
 
         if (res.ok) {
-            const data = await res.json();
-            
-            if (data.response === true) {
-                setStatus('paid');
-                if (typeof window !== 'undefined') {
-                    (window as any).dataLayer = (window as any).dataLayer || [];
-                    (window as any).dataLayer.push({ 
-                      event: 'purchase_verified',
-                      order_id: orderId,
-                      status: 'success'
-                    });
-                }
-            } else {
-                setStatus('failed');
+          const data = await res.json();
+
+          if (data.response === true) {
+            setStatus('paid');
+            if (typeof window !== 'undefined') {
+              (window as any).dataLayer = (window as any).dataLayer || [];
+              (window as any).dataLayer.push({
+                event: 'purchase_verified',
+                order_id: orderId,
+                status: 'success'
+              });
             }
-        } else {
+          } else {
             setStatus('failed');
+          }
+        } else {
+          setStatus('failed');
         }
 
       } catch (error) {
         console.error("Error verificando pago:", error);
-        setStatus('failed'); 
+        setStatus('failed');
       }
     };
 
@@ -58,7 +58,7 @@ export default function SuccessPage() {
 
   return (
     <main className="bg-brand-dark min-h-screen flex items-center justify-center p-6 text-white font-sans selection:bg-brand-lime selection:text-brand-dark">
-      
+
       <div className="w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl text-center relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-20 bg-brand-lime/10 blur-3xl -z-10" />
 
@@ -75,7 +75,7 @@ export default function SuccessPage() {
             <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
               <Check className="w-12 h-12 text-green-500" strokeWidth={3} />
             </div>
-            
+
             <h1 className="text-4xl font-black text-white mb-2 tracking-tight uppercase">¡Todo Listo!</h1>
             <p className="text-gray-300 mb-8 text-lg leading-relaxed">
               Tu pago para la orden <span className="font-mono text-brand-lime">#{orderId}</span> se procesó correctamente.
@@ -83,21 +83,21 @@ export default function SuccessPage() {
 
             <div className="bg-white/5 rounded-xl p-4 mb-8 w-full border border-white/5">
               <p className="text-sm text-gray-400">
-                Te enviamos el comprobante a tu email. <br/>
+                Te enviamos el comprobante a tu email. <br />
                 Para generar los QRs de acceso, debés completar los datos de los asistentes.
               </p>
             </div>
 
-            <Link 
-              href={`/nominar/${orderId}?qty=${quantity}`} 
+            <Link
+              href="/mis-entradas"
               className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 group mb-4 shadow-[0_0_20px_-5px_rgba(190,242,100,0.4)]"
             >
-              ASIGNAR ENTRADAS
-              <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              IR A MIS ENTRADAS
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
 
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-gray-500 hover:text-white text-sm font-bold transition-colors py-2"
             >
               Volver al inicio
@@ -115,8 +115,8 @@ export default function SuccessPage() {
             <button onClick={() => window.location.reload()} className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-xl transition-all">
               Reintentar Verificación
             </button>
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-gray-500 hover:text-white text-sm font-bold transition-colors py-4 block"
             >
               Volver al inicio
