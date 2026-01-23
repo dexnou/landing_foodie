@@ -28,8 +28,8 @@ export async function backendFetch(endpoint: string, options: BackendRequestOpti
 
     const reqHeaders: Record<string, string> = {
         'Content-Type': 'application/json',
-        'x-foodday-secret': API_SECRET,
-        'dbtoken': DB_TOKEN,
+        'x-foodday-secret': API_SECRET || '',
+        'dbtoken': DB_TOKEN || '',
         ...headers,
     };
 
