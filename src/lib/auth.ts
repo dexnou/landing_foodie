@@ -78,18 +78,17 @@ export const PROVINCIAS_ARGENTINA = [
 
 // Industrias
 export const INDUSTRIAS = [
-    'Tecnología',
-    'E-commerce',
-    'Fintech',
-    'Salud',
-    'Educación',
-    'Logística',
-    'Retail',
-    'Servicios',
-    'Manufactura',
-    'Agro',
-    'Entretenimiento',
-    'Marketing y Publicidad',
-    'Consultoría',
-    'Otro',
+    'Pizzas',
+    'Hamburguesas',
+    'Sushi',
+    'Cocina italiana',
+    'Cocina mexicana',
+    'Parrilla / carnes',
+    'Pollo / alitas',
+    'Comida saludable',
+    'Cafetería / bakery',
+    'Postres / heladería',
+    'Logística / última milla',
+    'Marketplace / agregadores',
 ];
+
