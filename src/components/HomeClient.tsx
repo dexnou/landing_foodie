@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import BookingModal from '@/components/BookingModal';
 import SponsorModal from '@/components/SponsorModal';
+import RequestMagicLinkModal from '@/components/RequestMagicLinkModal';
 import AccordionItem from '@/components/Accordion';
 import Image from 'next/image';
 import {
@@ -240,6 +241,7 @@ const DEFAULT_FAQS: FAQ[] = [
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSponsorModalOpen, setSponsorModalOpen] = useState(false);
+  const [isMagicLinkModalOpen, setMagicLinkModalOpen] = useState(false);
   const [isPlayingMobile, setIsPlayingMobile] = useState(false);
   const [isPlayingDesktop, setIsPlayingDesktop] = useState(false);
 
@@ -463,6 +465,13 @@ export default function Home() {
               >
                 Ver Agenda
               </Link>
+              <button
+                onClick={() => setMagicLinkModalOpen(true)}
+                className="px-8 py-4 rounded-full border-2 border-brand-lime/30 hover:border-brand-lime hover:bg-brand-lime/5 font-bold text-brand-lime transition-all text-sm uppercase tracking-wider flex items-center justify-center gap-2 min-h-[56px]"
+              >
+                <Ticket className="w-5 h-5" />
+                Mis Entradas
+              </button>
             </div>
 
             {/* MAIN PARTNERS (FULL COLOR, SIN OPACIDAD, CENTRADOS MOBILE) */}
@@ -934,6 +943,12 @@ export default function Home() {
         onSubmit={handleSponsorSubmit}
         formStatus={formStatus}
         setFormStatus={setFormStatus}
+      />
+
+      {/* Modal Magic Link */}
+      <RequestMagicLinkModal
+        isOpen={isMagicLinkModalOpen}
+        onClose={() => setMagicLinkModalOpen(false)}
       />
     </main>
   );

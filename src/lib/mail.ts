@@ -284,3 +284,103 @@ export const sendSponsorLeadEmail = async ({
 };
 
 
+
+export const sendMagicLinkEmail = async (email: string, magicLinkUrl: string, isPasswordReset: boolean = false) => {
+    const BREVO_API_KEY = process.env.BREVO_API_KEY;
+    const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@fooddeliveryday.com.ar';
+    const SENDER_NAME = process.env.SENDER_NAME || 'Food Delivery Day';
+
+    if (!BREVO_API_KEY) {
+        console.warn('[Email] BREVO_API_KEY no configurada. Saltando envío.');
+        return false;
+    }
+
+    const subject = isPasswordReset
+        ? 'Restablecer contraseña - Food Delivery Day'
+        : 'Acceso a tus entradas - Food Delivery Day';
+
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.6; color: #ffffff; background-color: #1a1a1a; margin: 0; padding: 0; }
+                .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #1a1a1a; }
+                .card { background-color: #222222; border: 1px solid #333333; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); text-align: center; }
+                .logo { margin-bottom: 30px; font-size: 24px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 2px; }
+                .logo span { color: #ff0054; }
+                h1 { color: #ffffff; font-size: 24px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; }
+                p { color: #cccccc; font-size: 16px; margin-bottom: 30px; }
+                .button { 
+                    display: inline-block; 
+                    padding: 16px 32px; 
+                    background-color: #ff0054; 
+                    color: #ffffff !important; 
+                    text-decoration: none; 
+                    border-radius: 50px; 
+                    font-weight: 900;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    margin: 10px 0 30px 0;
+                    box-shadow: 0 0 20px rgba(255, 0, 84, 0.4);
+                }
+                .link-text { color: #666; font-size: 12px; margin-top: 20px; word-break: break-all; }
+                .footer { font-size: 12px; color: #555; margin-top: 40px; border-top: 1px solid #333; padding-top: 20px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="card">
+                    <div class="logo">Food Delivery <span>Day</span></div>
+                    <h1>${isPasswordReset ? 'Restablecer Contraseña' : 'Acceso a Disertantes & Entradas'}</h1>
+                    
+                    <p>${isPasswordReset
+            ? 'Recibimos una solicitud para restablecer tu contraseña.'
+            : 'Hemos generado un acceso seguro para que puedas gestionar tus entradas.'}</p>
+                    
+                    <a href="${magicLinkUrl}" class="button">
+                        ${isPasswordReset ? 'Restablecer Contraseña' : 'Crear Contraseña y Acceder'}
+                    </a>
+
+                    <p style="font-size: 14px; margin-bottom: 0;">Si el botón no funciona, copiá y pegá este link:</p>
+                    <div class="link-text">${magicLinkUrl}</div>
+                </div>
+                <div class="footer">
+                    <p>Este link expira en 24 horas.<br>Si no solicitaste este acceso, ignorá este email.</p>
+                    <p>Food Delivery Day 2026</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+
+    try {
+        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'api-key': BREVO_API_KEY,
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+                to: [{ email: email }],
+                subject: subject,
+                htmlContent: htmlContent
+            })
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error('Error enviando magic link con Brevo:', errorData);
+            return false;
+        }
+
+        console.log(`Magic Link enviado a ${email} vía Brevo`);
+        return true;
+    } catch (error) {
+        console.error('Error de red al enviar magic link con Brevo:', error);
+        return false;
+    }
+}
