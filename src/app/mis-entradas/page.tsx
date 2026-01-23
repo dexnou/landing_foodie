@@ -23,6 +23,7 @@ interface Ticket {
     // New fields
     qr_code?: string;      // SVG string
     ticket_token?: string;
+    almuerzo?: boolean;    // New field
 }
 
 export default function MisEntradasPage() {
@@ -154,7 +155,8 @@ export default function MisEntradasPage() {
                             apellido: response.ticket.apellido,
                             email: editingTicket.mail,
                             ticketId: response.ticket.prodinfoid,
-                            token: response.ticket.ticket_token
+                            token: response.ticket.ticket_token,
+                            almuerzo: response.ticket.almuerzo // Pasamos el dato del almuerzo
                         })
                     }).catch(err => console.error("Error enviando email ticket:", err));
                 }

@@ -5,7 +5,7 @@ import { sendTicketAccessEmail } from '@/lib/mail';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { nombre, apellido, email, ticketId, token } = body;
+        const { nombre, apellido, email, ticketId, token, almuerzo } = body;
 
         if (!email || !token || !ticketId) {
             return NextResponse.json({ success: false, error: 'Faltan datos requeridos' }, { status: 400 });
@@ -16,7 +16,8 @@ export async function POST(request: Request) {
             apellido,
             email,
             ticketId,
-            token
+            token,
+            almuerzo
         });
 
         if (emailSuccess) {

@@ -341,7 +341,7 @@ export const sendMagicLinkEmail = async (email: string, magicLinkUrl: string, is
             : 'Hemos generado un acceso seguro para que puedas gestionar tus entradas.'}</p>
                     
                     <a href="${magicLinkUrl}" class="button">
-                        ${isPasswordReset ? 'Restablecer Contraseña' : 'Crear Contraseña y Acceder'}
+                        ${isPasswordReset ? 'Restablecer Contraseña' : 'Acceder a tus entradas'}
                     </a>
 
                     <p style="font-size: 14px; margin-bottom: 0;">Si el botón no funciona, copiá y pegá este link:</p>
@@ -392,6 +392,7 @@ interface TicketAccessEmailProps {
     email: string;
     ticketId: string | number;
     token: string;
+    almuerzo?: boolean; // Nuevo campo opcional
 }
 
 export const sendTicketAccessEmail = async ({
@@ -399,7 +400,8 @@ export const sendTicketAccessEmail = async ({
     apellido,
     email,
     ticketId,
-    token
+    token,
+    almuerzo = false // Default a false
 }: TicketAccessEmailProps) => {
     const BREVO_API_KEY = process.env.BREVO_API_KEY;
     const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@fooddeliveryday.com.ar';
@@ -459,7 +461,14 @@ export const sendTicketAccessEmail = async ({
                         <span class="label">ASISTENTE</span>
                         <h2>${nombre} ${apellido}</h2>
                         
-                        <span class="tag">GENERAL</span> <div style="margin: 20px 0;">
+                        <div style="margin-top: 15px;">
+                            ${almuerzo
+            ? '<span class="tag" style="background: #ff0054; color: #fff;">FULL EXPERIENCE (CON ALMUERZO)</span>'
+            : '<span class="tag">GENERAL (SIN ALMUERZO)</span>'
+        }
+                        </div>
+
+                        <div style="margin: 20px 0;">
                             <div class="qr-block">
                                 <img src="${qrImageUrl}" alt="QR Entrada" width="180" height="180" style="display: block;">
                             </div>
