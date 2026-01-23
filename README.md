@@ -1,1 +1,1 @@
-entradas!
+entradasok
