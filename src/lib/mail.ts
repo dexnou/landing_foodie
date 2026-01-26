@@ -417,8 +417,8 @@ export const sendTicketAccessEmail = async ({
         return false;
     }
 
-    const baseUrl = 'http://www.fooddeliveryday.com.ar';
-    const qrData = encodeURIComponent(`${baseUrl}/mis-entradas?token=${token}`);
+    const baseUrl = 'https://www.fooddeliveryday.com.ar';
+    const qrData = encodeURIComponent(`${baseUrl}/entradas?token=${token}`);
     const qrImageUrl = `https://quickchart.io/qr?text=${qrData}&size=300&margin=1&format=png`;
 
     // Calendar Links
