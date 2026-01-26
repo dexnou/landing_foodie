@@ -482,7 +482,7 @@ export default function Home() {
                 {/* Mercado Pago */}
                 <div className="relative w-56 h-20 md:w-32 md:h-20">
                   <Image
-                    src="/sponsors/mercadopagoo.png"
+                    src="/sponsors/mercadolibre.png"
                     alt="Mercado Pago"
                     fill
                     className="object-contain object-center md:object-left"
@@ -750,7 +750,7 @@ export default function Home() {
               Charla junto a <strong>Francisco Matarazzo (Head de Food Delivery en Mercado Pago Argentina)</strong>:
               El futuro no es para los más grandes, es para los que se animan
               <span className="relative w-16 h-5 inline-block align-middle mx-2 translate-y-[-2px]">
-                <Image src="/sponsors/mercadopagoo.png" alt="Mercado Pago" fill className="object-contain" />
+                <Image src="/sponsors/mercadolibre.png" alt="Mercado Pago" fill className="object-contain" />
               </span> <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Sumate! &gt;</button>
             </AccordionItem>
             <AccordionItem time="16:30" title="After & Cierre a Puro Humor: Gerardo Freideles">Stand Up de cierre para terminar el día: La gastronomía contada por un gastronómico. </AccordionItem>
@@ -769,7 +769,7 @@ export default function Home() {
               <Star className="w-6 h-6 text-yellow-400 fill-current" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[{ name: "Rappi", src: "/sponsors/rappii.png" }, { name: "Mercado Pago", src: "/sponsors/mercadopagoo.png" }].map((sponsor) => (
+              {[{ name: "Rappi", src: "/sponsors/rappii.png" }, { name: "Mercado Pago", src: "/sponsors/mercadolibre.png" }].map((sponsor) => (
                 <div key={sponsor.name} className="h-40 bg-white/5 border border-yellow-400/20 rounded-xl flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer p-8 relative group">
                   <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
                 </div>

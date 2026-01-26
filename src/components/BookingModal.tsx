@@ -356,9 +356,9 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
                 <button type="submit" className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-black py-3 rounded-xl shadow-lg shadow-brand-lime/20 transform active:scale-[0.98] transition-all text-base uppercase tracking-wide min-h-[48px] flex items-center justify-center gap-2">
                   IR A PAGAR ${totalPrice.toLocaleString('es-AR')}
                 </button>
-                <p className="text-center text-[10px] text-gray-400 mt-3 flex items-center justify-center gap-1">
-                  <Shield className="w-3 h-3" /> Pagos procesados de forma segura con
-                  <span className="relative w-14 h-4 inline-block">
+                <p className="text-center text-xs text-gray-400 mt-3 flex items-center justify-center gap-1.5">
+                  <Shield className="w-4 h-4" /> Pagos procesados de forma segura con
+                  <span className="relative w-16 h-5 inline-block">
                     <Image src="/sponsors/mercadopagoo.png" alt="Mercado Pago" fill className="object-contain" />
                   </span>
                 </p>
