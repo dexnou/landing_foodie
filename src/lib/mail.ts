@@ -109,53 +109,53 @@ export const sendOrderConfirmationEmail = async ({
                             <p>Hola <span class="strong">${name}</span>,</p>
                             <p>Confirmamos la recepción de tu pago. Ya sos parte del evento que va a revolucionar el delivery en Argentina.</p>
 
-                            <table class="receipt" width="100%" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td colspan="2" style="text-transform: uppercase; font-size: 12px; color: #666; letter-spacing: 1px; padding-bottom: 10px;">
-                                        Orden #${orderId}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td width="70%">${ticketType} <span style="font-size:12px; color:#666;">(x${quantity})</span></td>
-                                    <td width="30%" align="right">${unitPrice}</td>
-                                </tr>
-                                <tr class="total-row">
-                                    <td width="70%" style="border-bottom: none;">TOTAL PAGADO</td>
-                                    <td width="30%" align="right" style="border-bottom: none;">${totalPrice}</td>
-                                </tr>
-                            </table>
+                                <table class="receipt" width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td colspan="2" style="text-transform: uppercase; font-size: 12px; color: #666; letter-spacing: 1px; padding-bottom: 10px;">
+                                            Orden #${orderId}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="70%">${ticketType} <span style="font-size:12px; color:#666;">(x${quantity})</span></td>
+                                        <td width="30%" align="right">${unitPrice}</td>
+                                    </tr>
+                                    <tr class="total-row">
+                                        <td width="70%" style="border-bottom: none;">TOTAL PAGADO</td>
+                                        <td width="30%" align="right" style="border-bottom: none;">${totalPrice}</td>
+                                    </tr>
+                                </table>
 
-                            <table width="100%" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td align="center" style="padding-top: 20px;">
-                                        <a href="https://www.fooddeliveryday.com.ar" class="btn">Ver Info del Evento</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="center" style="padding-top: 15px;">
-                                        <a href="https://www.fooddeliveryday.com.ar/mis-entradas" class="btn">Hacé tu Checkin</a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td align="center" style="padding-top: 20px;">
+                                            <a href="https://www.fooddeliveryday.com.ar" class="btn">Ver Info del Evento</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" style="padding-top: 15px;">
+                                            <a href="https://www.fooddeliveryday.com.ar/mis-entradas" class="btn">Hacé el check-in y accedé a tus entradas</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
 
-                    <tr>
-                        <td class="bg-footer" style="padding: 30px; text-align: center; border-top: 1px solid #333;">
-                            <p style="font-size: 12px; color: #666; margin-bottom: 10px;"></p>
-                            <p style="font-size: 11px; color: #444; margin-top: 20px;">
-                                © 2026 Food Delivery Day. Todos los derechos reservados.<br>
-                                Av. Rafael Obligado 6340, CABA, Argentina.
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>
-  `;
+                        <tr>
+                            <td class="bg-footer" style="padding: 30px; text-align: center; border-top: 1px solid #333;">
+                                <p style="font-size: 12px; color: #666; margin-bottom: 10px;"></p>
+                                <p style="font-size: 11px; color: #444; margin-top: 20px;">
+                                    © 2026 Food Delivery Day. Todos los derechos reservados.<br>
+                                    Av. Rafael Obligado 6340, CABA, Argentina.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
+      `;
 
     try {
         const res = await fetch('https://api.brevo.com/v3/smtp/email', {
