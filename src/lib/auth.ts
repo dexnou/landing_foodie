@@ -90,5 +90,7 @@ export const INDUSTRIAS = [
     'Postres / heladería',
     'Logística / última milla',
     'Marketplace / agregadores',
+    'Sistemas y ERPs',
+    'Otros'
 ];
 

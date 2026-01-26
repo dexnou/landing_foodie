@@ -131,6 +131,11 @@ export const sendOrderConfirmationEmail = async ({
                                         <a href="https://www.fooddeliveryday.com.ar" class="btn">Ver Info del Evento</a>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td align="center" style="padding-top: 15px;">
+                                        <a href="https://www.fooddeliveryday.com.ar/mis-entradas" class="btn">Hacé tu Checkin</a>
+                                    </td>
+                                </tr>
                             </table>
                         </td>
                     </tr>
@@ -413,7 +418,7 @@ export const sendTicketAccessEmail = async ({
     }
 
     const baseUrl = 'http://www.fooddeliveryday.com.ar';
-    const qrData = encodeURIComponent(`${baseUrl}/entradas?token=${token}`);
+    const qrData = encodeURIComponent(`${baseUrl}/mis-entradas?token=${token}`);
     const qrImageUrl = `https://quickchart.io/qr?text=${qrData}&size=300&margin=1&format=png`;
 
     // Calendar Links
