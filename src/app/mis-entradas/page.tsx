@@ -170,7 +170,7 @@ export default function MisEntradasPage() {
 
     const handleLogout = () => {
         authUtils.clearToken();
-        router.push('/login');
+        router.push('/');
     };
 
     if (loading) {

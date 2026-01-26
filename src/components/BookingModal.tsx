@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { authUtils } from '@/lib/auth';
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -115,6 +117,13 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
             const isPaid = data.response === true;
 
             if (isPaid) {
+
+              // 1. Guardar token de sesión si existe (Auto-Login)
+              if (data.sessionToken) {
+                authUtils.saveToken(data.sessionToken);
+                console.log("🔐 Sesión iniciada automáticamente post-compra");
+              }
+
               setBookingState('paid');
               clearInterval(interval);
 
@@ -418,7 +427,7 @@ export default function BookingModal({ isOpen, onClose }: ModalProps) {
               </div>
 
               <Link
-                href={`/success/${orderId}?qty=${quantity}`}
+                href="/mis-entradas"
                 className="w-full bg-brand-lime hover:bg-brand-limeHover text-brand-dark font-bold py-4 rounded-xl transition-all shadow-lg shadow-brand-lime/20 flex items-center justify-center gap-2"
                 onClick={onClose}
               >

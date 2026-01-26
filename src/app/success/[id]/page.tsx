@@ -4,6 +4,8 @@ import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Check, X, Loader2, ArrowRight, UserPlus } from 'lucide-react';
 
+import { authUtils } from '@/lib/auth';
+
 export default function SuccessPage() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -30,6 +32,12 @@ export default function SuccessPage() {
           const data = await res.json();
 
           if (data.response === true) {
+
+            // 1. Guardar token de sesión de respaldo
+            if (data.sessionToken) {
+              authUtils.saveToken(data.sessionToken);
+            }
+
             setStatus('paid');
             if (typeof window !== 'undefined') {
               (window as any).dataLayer = (window as any).dataLayer || [];
