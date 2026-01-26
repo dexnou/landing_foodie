@@ -133,7 +133,7 @@ export const sendOrderConfirmationEmail = async ({
                                 </tr>
                                 <tr>
                                     <td align="center" style="padding-top: 15px;">
-                                        <a href="https://www.fooddeliveryday.com.ar/mis-entradas" class="btn">Hacé tu Check-in</a>
+                                        <a href="https://www.fooddeliveryday.com.ar/mis-entradas" class="btn">Hacé tu Checkin</a>
                                     </td>
                                 </tr>
                             </table>
