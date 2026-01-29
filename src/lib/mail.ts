@@ -409,8 +409,8 @@ export const sendTicketAccessEmail = async ({
     almuerzo = false // Default a false
 }: TicketAccessEmailProps) => {
     const BREVO_API_KEY = process.env.BREVO_API_KEY;
-    const SENDER_EMAIL = process.env.SENDER_EMAIL || 'info@fooddeliveryday.com.ar';
-    const SENDER_NAME = process.env.SENDER_NAME || 'Food Delivery Day';
+    const SENDER_EMAIL = process.env.SENDER_EMAIL;
+    const SENDER_NAME = process.env.SENDER_NAME;
 
     if (!BREVO_API_KEY) {
         console.warn('[Email] BREVO_API_KEY no configurada. Saltando envío de ticket.');

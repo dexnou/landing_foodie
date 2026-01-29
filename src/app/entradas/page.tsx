@@ -1,17 +1,21 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 
-export default function EntradasRedirect({
-    searchParams,
-}: {
-    searchParams: { [key: string]: string | string[] | undefined };
+export default async function EntradasPage(props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    // Redirigimos a /mis-entradas, preservando el token si es necesario para algo futuro,
-    // o simplemente enviamos al usuario al dashboard.
-    // El usuario pidió explícitamente redirigir a /mis-entradas.
+    const searchParams = await props.searchParams;
+    const token = searchParams.token;
 
-    // Si queremos preservar params:
-    // const token = searchParams.token;
-    // if (token) redirect(`/mis-entradas?token=${token}`);
+    // Check for staff session
+    const cookieStore = await cookies();
+    const staffSession = cookieStore.get('staff_session');
 
+    if (staffSession?.value === 'active' && token) {
+        // Si es Staff y hay token -> Redirigir a validar en lugar de mis-entradas
+        redirect(`/entrada/validar?token=${token}`);
+    }
+
+    // Comportamiento normal (Usuario final) -> Redirigir a sus entradas
     redirect('/mis-entradas');
 }

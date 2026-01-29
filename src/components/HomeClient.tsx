@@ -731,27 +731,63 @@ export default function Home() {
 
           <div className="space-y-2">
             <AccordionItem time="09:00" title="Apertura de Puertas">Vení a visitar los stands participantes, retira tu acreditación y comenzá el networking. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Asegurá tu entrada! &gt;</button></AccordionItem>
-            <AccordionItem time="10:00 - 10:30" title="Panel: Gastronómicos & Delivery">Panel con 3 gastronómicos que supieron sacarle el jugo al delivery: <strong>Esteban Wolf</strong> (Founder & CEO Chocorisimo, Persicco, Guapaletas y Abuela Goye). <strong> Alejandro Cilley </strong> (CEO Tea Connection y Green Eat). <strong>Pablo Balan</strong> (Founder & CEO Mooi). <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡No te lo pierdas! &gt;</button></AccordionItem>
+            <AccordionItem time="10:00 - 10:30" title="Panel: Gastronómicos & Delivery">
+              <div className="mb-3">
+                Panel con 3 gastronómicos que supieron sacarle el jugo al delivery: <strong>Esteban Wolf</strong> (Founder & CEO Chocorisimo, Persicco, Guapaletas y Abuela Goye). <strong> Alejandro Cilley </strong> (CEO Tea Connection y Green Eat). <strong>Pablo Balan</strong> (Founder & CEO Mooi). <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡No te lo pierdas! &gt;</button>
+              </div>
+              <div className="flex flex-wrap gap-4 items-center -ml-3">
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/chocorisimo_ok.png" alt="Chocorisimo" fill className="object-contain" />
+                </span>
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/guapaletas.png" alt="Guapaletas" fill className="object-contain" />
+                </span>
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/persicco_ok.png" alt="Persicco" fill className="object-contain" />
+                </span>
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/mooi_ok.png" alt="Mooi" fill className="object-contain" />
+                </span>
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/greeneat_ok.png" alt="Green Eat" fill className="object-contain" />
+                </span>
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/teaconnection_ok.png" alt="Tea Connection" fill className="object-contain" />
+                </span>
+              </div>
+            </AccordionItem>
             <AccordionItem time="11:30 - 12:00" title="El delivery no te salva... pero puede cambiarte la vida">
-              Charla junto a <strong>Uriel Krimer (Co-Founder & CEO de Atomic Kitchens)</strong>.
-              +1.500 franquicias virtuales en LATAM: las decisiones que hicieron la diferencia.
-              <span className="relative w-16 h-5 inline-block align-middle mx-2 translate-y-[-2px]">
-                <Image src="/sponsors/atomic.png" alt="Atomic Kitchens" fill className="object-contain" />
-              </span> <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Inspirate! &gt;</button>
+              <div className="mb-3">
+                Charla junto a <strong>Uriel Krimer (Co-Founder & CEO de Atomic Kitchens)</strong>.
+                +1.500 franquicias virtuales en LATAM: las decisiones que hicieron la diferencia. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Inspirate! &gt;</button>
+              </div>
+              <div className="flex flex-wrap gap-4 items-center -ml-3">
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/atomic.png" alt="Atomic Kitchens" fill className="object-contain" />
+                </span>
+              </div>
             </AccordionItem>
             <AccordionItem time="14:00 - 14:30" title="¿Por qué el delivery es la mejor publicidad del mundo?">
-              Charla junto a <strong>Franco Lena (Country Manager Rappi Argentina)</strong>:
-              Cuando el crecimiento va en modo Turbo.
-              <span className="relative w-12 h-5 inline-block align-middle mx-2 translate-y-[-2px]">
-                <Image src="/sponsors/rappii.png" alt="Rappi" fill className="object-contain" />
-              </span> <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Reservá ya! &gt;</button>
+              <div className="mb-3">
+                Charla junto a <strong>Franco Lena (Country Manager Rappi Argentina)</strong>:
+                Cuando el crecimiento va en modo Turbo. <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Reservá ya! &gt;</button>
+              </div>
+              <div className="flex flex-wrap gap-4 items-center -ml-3">
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/rappii.png" alt="Rappi" fill className="object-contain" />
+                </span>
+              </div>
             </AccordionItem>
             <AccordionItem time="15:30 - 16:00" title="Un solo ecosistema, mil oportunidades para tu restaurante">
-              Charla junto a <strong>Francisco Matarazzo (Head de Food Delivery en Mercado Pago Argentina)</strong>:
-              El futuro no es para los más grandes, es para los que se animan
-              <span className="relative w-16 h-5 inline-block align-middle mx-2 translate-y-[-2px]">
-                <Image src="/sponsors/mercadolibre.png" alt="Mercado Pago" fill className="object-contain" />
-              </span> <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Sumate! &gt;</button>
+              <div className="mb-3">
+                Charla junto a <strong>Francisco Matarazzo (Head de Food Delivery en Mercado Pago Argentina)</strong>:
+                El futuro no es para los más grandes, es para los que se animan <button onClick={() => setModalOpen(true)} className="text-brand-lime font-bold hover:underline ml-1 cursor-pointer">¡Sumate! &gt;</button>
+              </div>
+              <div className="flex flex-wrap gap-4 items-center -ml-5">
+                <span className="relative w-36 h-10">
+                  <Image src="/sponsors/mercadolibre.png" alt="Mercado Pago" fill className="object-contain" />
+                </span>
+              </div>
             </AccordionItem>
             <AccordionItem time="16:30" title="After & Cierre a Puro Humor: Gerardo Freideles">Stand Up de cierre para terminar el día: La gastronomía contada por un gastronómico. </AccordionItem>
           </div>
@@ -782,8 +818,8 @@ export default function Home() {
               <h3 className="text-gray-300 font-bold text-lg tracking-widest uppercase">Sponsors Plata</h3>
               <Shield className="w-5 h-5 text-gray-300" />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {[{ name: "Atomic Kitchens", src: "/sponsors/atomic.png" }, { name: "Rokket", src: "/sponsors/rokket.png" }].map((sponsor) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mx-auto">
+              {[{ name: "Atomic Kitchens", src: "/sponsors/atomic.png" }, { name: "Rokket", src: "/sponsors/rokket.png" }, { name: "BrandPack", src: "/sponsors/brandpack_ok.png" }].map((sponsor) => (
                 <div key={sponsor.name} className="h-32 bg-white/5 border border-gray-500/20 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all p-6 relative group">
                   <div className="relative w-full h-full"><Image src={sponsor.src} alt={sponsor.name} fill className="object-contain" /></div>
                 </div>
